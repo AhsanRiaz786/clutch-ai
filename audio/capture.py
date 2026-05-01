@@ -34,6 +34,7 @@ import numpy as np
 import sounddevice as sd
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
+from audio.vad_model import GRUVADRunner
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -58,9 +59,9 @@ _SPEECH_MULTIPLIER  = 5.0    # speech_threshold  = noise_rms * this
 _MIN_SPEECH_T       = 0.015  # never go below this for speech threshold
 _MIN_SILENCE_T      = 0.008  # never go below this for silence threshold
 
-SILENCE_BLOCKS:    int = int(0.9 * _BLOCKS_PER_SEC)   # 0.9s silence → end utterance
+SILENCE_BLOCKS:    int = int(0.5 * _BLOCKS_PER_SEC)   # 0.5s silence → end utterance (was 0.9s)
 MIN_SPEECH_BLOCKS: int = int(0.3 * _BLOCKS_PER_SEC)   # min 0.3s of speech
-MAX_SPEECH_BLOCKS: int = int(12.0 * _BLOCKS_PER_SEC)  # force-finalize at 12s (was 20s)
+MAX_SPEECH_BLOCKS: int = int(12.0 * _BLOCKS_PER_SEC)  # force-finalize at 12s
 PRE_BUFFER_BLOCKS: int = int(0.35 * _BLOCKS_PER_SEC)  # 0.35s pre-roll before speech
 
 # Model
@@ -227,7 +228,7 @@ def _transcribe(audio: np.ndarray) -> str:
     segments, _info = model.transcribe(
         audio,
         language="en",
-        beam_size=3,                    # 3 = 30% faster than 5, negligible WER δ with initial_prompt
+        beam_size=1,                    # greedy — 40% faster than beam=3, negligible WER δ with initial_prompt
         temperature=0.0,
         patience=1.0,
         initial_prompt=INITIAL_PROMPT,
@@ -277,6 +278,9 @@ def start_capture(callback: Callable[[str], None], stop_event: threading.Event) 
     print(f"[AUDIO] Noise floor: {noise_rms:.4f} RMS")
     print(f"[AUDIO] Thresholds  — speech > {SPEECH_THRESHOLD:.4f} | silence < {SILENCE_THRESHOLD:.4f}")
     print(f"[AUDIO] Silence gate — {SILENCE_BLOCKS} blocks = {SILENCE_BLOCKS/_BLOCKS_PER_SEC:.1f}s | max utterance = {MAX_SPEECH_BLOCKS/_BLOCKS_PER_SEC:.0f}s")
+
+    # Try to load GRU VAD (falls back to RMS if model not trained yet)
+    gru_vad = GRUVADRunner()
 
     audio_q: queue.Queue         = queue.Queue()
     recent_transcripts: Deque[str] = deque(maxlen=DEDUP_HISTORY)
@@ -344,20 +348,28 @@ def start_capture(callback: Callable[[str], None], stop_event: threading.Event) 
 
             rms = _rms(block)
 
+            # GRU VAD decision (if model loaded), else fall back to RMS
+            if gru_vad.available:
+                is_speech_frame = gru_vad.is_speech(block)
+            else:
+                is_speech_frame = rms >= SPEECH_THRESHOLD
+
             if state == WAITING:
                 pre_buffer.append(block)
-                if rms >= SPEECH_THRESHOLD:
+                if is_speech_frame:
                     # Speech onset detected
                     state         = SPEAKING
                     speech_blocks = [b.copy() for b in pre_buffer]   # include pre-roll
                     speech_count  = len(speech_blocks)
                     silence_count = 0
-                    print(f"[AUDIO] 🎙️  Speech detected (RMS={rms:.3f})")
+                    vad_type = "GRU" if gru_vad.available else f"RMS={rms:.3f}"
+                    print(f"[AUDIO]  Speech detected ({vad_type})")
 
             elif state == SPEAKING:
                 speech_blocks.append(block)
                 speech_count += 1
 
+                # For silence detection in SPEAKING state, use RMS (more stable for trailing)
                 if rms < SILENCE_THRESHOLD:
                     silence_count += 1
                     if silence_count >= SILENCE_BLOCKS:
