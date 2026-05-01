@@ -29,6 +29,7 @@ CHROMA_PATH     = os.getenv("CHROMA_PATH", "./db")
 COLLECTION_NAME = "clutch_notes"
 EMBEDDER_MODEL  = os.getenv("EMBEDDER_MODEL", "all-MiniLM-L6-v2")
 DEFAULT_K       = int(os.getenv("TOP_K_CHUNKS", "3"))
+USE_RERANKER    = os.getenv("USE_RERANKER", "1") != "0"   # disable via env if needed
 
 # ---------------------------------------------------------------------------
 # Singletons
@@ -36,6 +37,8 @@ DEFAULT_K       = int(os.getenv("TOP_K_CHUNKS", "3"))
 _embedder   = None
 _client     = None
 _collection = None   # cached after first verified fetch
+_reranker   = None   # CrossAttentionReranker — loaded lazily
+_reranker_loaded = False
 
 
 def _get_embedder() -> SentenceTransformer:
@@ -71,6 +74,27 @@ def _get_collection():
     return _collection
 
 
+def _get_reranker():
+    """Lazily loads the cross-attention reranker. Returns None if not trained."""
+    global _reranker, _reranker_loaded
+    if _reranker_loaded:
+        return _reranker
+    _reranker_loaded = True
+    if not USE_RERANKER:
+        return None
+    try:
+        from rag.reranker import load_reranker
+        _reranker = load_reranker()
+        if _reranker is not None:
+            print("[RETRIEVE] Cross-attention reranker loaded ✓")
+        else:
+            print("[RETRIEVE] Reranker not trained — using cosine similarity ranking.")
+    except Exception as e:
+        print(f"[RETRIEVE] Reranker load failed ({e}) — using cosine similarity ranking.")
+        _reranker = None
+    return _reranker
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -93,17 +117,30 @@ def retrieve(query: str, k: int = DEFAULT_K) -> List[str]:
     collection = _get_collection()
 
     # Embed query
-    query_vec = embedder.encode([query], show_progress_bar=False).tolist()
+    query_emb = embedder.encode([query], show_progress_bar=False)
+    query_vec = query_emb.tolist()
 
-    # Query ChromaDB
+    # Retrieve more candidates than needed so reranker has room to reorder
+    reranker  = _get_reranker()
+    fetch_k   = min(max(k * 3, 10), collection.count()) if reranker else min(k, collection.count())
+
+    include = ["documents", "embeddings"] if reranker else ["documents"]
     results = collection.query(
         query_embeddings=query_vec,
-        n_results=min(k, collection.count()),
+        n_results=fetch_k,
+        include=include,
     )
 
-    # Extract the document texts
-    chunks = results["documents"][0] if results["documents"] else []
-    return chunks
+    chunk_texts = results["documents"][0] if results["documents"] else []
+
+    # Rerank if available
+    if reranker and chunk_texts:
+        from rag.reranker import rerank
+        chunk_embs = results["embeddings"][0]
+        chunk_texts, scores = rerank(query_emb[0], chunk_embs, chunk_texts, reranker)
+        print(f"[RETRIEVE] Reranked {len(chunk_texts)} → returning top {k}")
+
+    return chunk_texts[:k]
 
 
 def verify_collection_exists() -> bool:
