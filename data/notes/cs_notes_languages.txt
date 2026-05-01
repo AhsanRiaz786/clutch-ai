@@ -1,0 +1,120 @@
+CS Interview Notes — Python Internals & Language Concepts
+NUST SEECS | CS-419 Study Material
+
+=============================================================
+PYTHON GARBAGE COLLECTION & MEMORY MANAGEMENT
+=============================================================
+Python uses automatic memory management — the programmer does not manually
+allocate or free memory. Two main mechanisms handle this:
+
+1. Reference Counting (primary mechanism):
+   - Every object has a reference count tracking how many references point to it
+   - When ref count drops to 0, memory is freed immediately
+   - Problem: cannot handle reference cycles (A → B → A, neither reaches 0)
+
+2. Cyclic Garbage Collector (supplementary):
+   - Python's gc module detects and collects reference cycles
+   - Uses generational collection: three generations (0, 1, 2)
+   - Young objects (gen 0) collected most frequently; older objects less often
+   - Most objects die young (generational hypothesis)
+   - gc.collect() forces a collection; gc.disable() turns it off
+   - Objects with __del__ methods complicate cycle collection
+
+Memory allocation:
+   - Python uses its own memory allocator (pymalloc) for small objects (<= 512 bytes)
+   - pymalloc manages memory in arenas → pools → blocks
+   - Reduces calls to OS malloc; improves speed and reduces fragmentation
+   - Large objects go directly to OS via malloc
+
+id() returns the memory address of an object in CPython.
+sys.getrefcount(obj) returns the reference count (adds 1 for the getrefcount call itself).
+
+GIL (Global Interpreter Lock):
+   - CPython mutex that allows only one thread to execute Python bytecode at a time
+   - Simplifies memory management (no need for per-object locks)
+   - Consequence: CPU-bound multithreaded Python programs don't get true parallelism
+   - I/O-bound threads are fine — GIL is released during I/O operations
+   - Solution for CPU-bound: multiprocessing (separate processes, no shared GIL)
+
+Memory profile: use tracemalloc (built-in) or memory_profiler package to track memory usage.
+
+=============================================================
+PYTHON DATA MODEL & INTERNALS
+=============================================================
+Everything in Python is an object. Even int, str, function are objects.
+
+Interning: Python interns (caches) small integers (-5 to 256) and short strings.
+  a = 256; b = 256; a is b  → True  (same object in memory)
+  a = 257; b = 257; a is b  → False (different objects)
+
+== vs is:
+  == compares values (calls __eq__)
+  is compares identity (same memory address, same object)
+
+Mutable vs Immutable:
+  Immutable: int, float, str, tuple, frozenset — value cannot change after creation
+  Mutable: list, dict, set — value can change in place
+  Immutable objects are hashable and can be dict keys / set members
+
+Deep Copy vs Shallow Copy:
+  import copy
+  shallow = copy.copy(obj)       # New container, same element references
+  deep    = copy.deepcopy(obj)   # New container AND new copies of all nested objects
+  obj2 = obj[:]                  # Shallow copy of list
+
+  Shallow copy: nested mutable objects are shared → modifying nested object affects both
+  Deep copy: fully independent copy — no shared references
+
+Pass by object reference (Python):
+  Python passes the reference to the object, not a copy.
+  Rebinding (x = new_value) inside function doesn't affect caller.
+  Mutating (list.append()) inside function DOES affect caller.
+
+=============================================================
+JAVASCRIPT CLOSURES AND SCOPE
+=============================================================
+Closure: a function bundled together with its lexical environment.
+The inner function retains access to variables in the outer function's scope
+even after the outer function has returned.
+
+Example:
+  function makeCounter() {
+      let count = 0;          // captured in closure
+      return {
+          increment: () => ++count,
+          decrement: () => --count,
+          value:     () => count
+      };
+  }
+  const c = makeCounter();
+  c.increment(); c.increment();
+  c.value(); // 2  — count is private, maintained in closure scope
+
+Scope chain: when a variable is accessed, JS looks up the scope chain:
+  Local scope → Enclosing scope(s) → Global scope → Built-in
+
+var vs let vs const:
+  var: function-scoped, hoisted (declaration moved to top of function)
+  let: block-scoped, not hoisted to usable state (temporal dead zone)
+  const: block-scoped, must be initialized, reference is immutable (object content can change)
+
+Hoisting: declarations are moved to top of their scope before execution.
+  - var declarations hoisted (initialized to undefined)
+  - function declarations fully hoisted (usable before declaration)
+  - let/const declarations hoisted but not initialized (TDZ)
+
+Event Loop (JavaScript runtime):
+  - Single-threaded but non-blocking via event loop
+  - Call stack: executes synchronous code
+  - Web APIs: handle async operations (setTimeout, fetch)
+  - Callback queue: holds completed callbacks
+  - Event loop: moves callbacks from queue to stack when stack is empty
+  - Microtask queue (Promises): higher priority than callback queue
+
+Promise / async-await:
+  async function fetchData() {
+      try {
+          const data = await fetch(url);  // pauses here, non-blocking
+          return data.json();
+      } catch (e) { console.error(e); }
+  }

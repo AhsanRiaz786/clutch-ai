@@ -1,0 +1,178 @@
+CS Interview Notes — Data Structures & Algorithms
+NUST SEECS | CS-419 Study Material
+
+=============================================================
+BINARY SEARCH TREE (BST)
+=============================================================
+A Binary Search Tree is a tree data structure where each node has at most
+two children (left and right). The key invariant: for every node N,
+all keys in N's left subtree are less than N.key, and all keys in N's
+right subtree are greater than N.key. No duplicate keys.
+
+Properties:
+- In-order traversal (left, root, right) gives elements in sorted order
+- Average time complexity: O(log n) for search, insert, delete
+- Worst case (degenerate/sorted input): O(n) — degenerates into a linked list
+- Space complexity: O(n)
+- Self-balancing variants: AVL Tree, Red-Black Tree maintain O(log n) worst case
+
+Operations:
+- Search: compare key with node, go left if smaller, right if larger
+- Insert: search for position, insert as leaf node
+- Delete: three cases — leaf node, one child, two children (replace with inorder successor)
+
+BST node structure:
+  class TreeNode:
+      def __init__(self, key):
+          self.key = key
+          self.left = None
+          self.right = None
+
+=============================================================
+HASH TABLES (Hash Maps)
+=============================================================
+A hash table maps keys to values using a hash function h(k) → index.
+The hash function converts the key into an array index.
+
+Collision handling strategies:
+1. Chaining (Separate Chaining): each bucket holds a linked list of entries.
+   Worst case O(n) if all keys hash to same bucket.
+2. Open Addressing (Linear Probing): on collision, probe next slot linearly.
+   Clustering is a problem with linear probing.
+3. Double Hashing: use a second hash function for probing step size.
+
+Load factor α = n/m (n = number of entries, m = number of buckets)
+- When α > 0.7, rehash (resize the table, typically double it)
+- Average case: O(1) for insert, delete, search assuming uniform hashing
+- Worst case: O(n) for all operations
+
+Python dict uses hash tables internally. Keys must be hashable (immutable).
+Hash function for strings: polynomial rolling hash.
+
+=============================================================
+STACKS AND QUEUES
+=============================================================
+Stack (LIFO — Last In, First Out):
+- Operations: push(x), pop(), peek(), isEmpty()
+- Time complexity: O(1) for all operations
+- Use cases: function call stack, undo/redo, bracket matching, DFS
+- Implementation: array or linked list
+
+Queue (FIFO — First In, First Out):
+- Operations: enqueue(x), dequeue(), front(), isEmpty()
+- Time complexity: O(1) for all operations
+- Use cases: BFS, task scheduling, producer-consumer, print queue
+- Deque (double-ended queue): allows push/pop from both ends
+- Priority Queue: dequeues element with highest priority first (backed by heap)
+
+=============================================================
+HEAPS
+=============================================================
+A heap is a complete binary tree satisfying the heap property:
+- Max-Heap: parent.key >= children.key (root is the maximum)
+- Min-Heap: parent.key <= children.key (root is the minimum)
+
+Stored as an array: for node at index i,
+  left child:  2*i + 1
+  right child: 2*i + 2
+  parent:      (i - 1) // 2
+
+Operations:
+- insert: add at end, sift up (bubble up) — O(log n)
+- extract-max/min: remove root, put last element at root, sift down — O(log n)
+- heapify (build heap from array): O(n) using bottom-up approach
+- peek (get max/min): O(1)
+
+Use cases: priority queues, Dijkstra's algorithm, heap sort, median finding.
+Python: heapq module implements min-heap.
+
+=============================================================
+DYNAMIC PROGRAMMING (DP)
+=============================================================
+Dynamic programming solves problems by breaking them into overlapping
+subproblems and storing (memoizing) solutions to avoid recomputation.
+
+Key conditions for DP:
+1. Optimal substructure: optimal solution contains optimal solutions to subproblems
+2. Overlapping subproblems: same subproblems are solved multiple times
+
+Approaches:
+- Top-down (Memoization): recursive with cache (dict/array)
+- Bottom-up (Tabulation): iterative, fills table from base cases up
+
+Classic DP problems:
+- Fibonacci: F(n) = F(n-1) + F(n-2), O(n) with memoization vs O(2^n) naive
+- Longest Common Subsequence (LCS): O(m*n)
+- 0/1 Knapsack: O(n*W)
+- Coin Change: minimum coins to make amount — O(n*amount)
+- Edit Distance (Levenshtein): O(m*n)
+- Matrix Chain Multiplication: O(n^3)
+
+Subproblem identification is key. Define state, recurrence, base case.
+
+=============================================================
+SORTING ALGORITHMS
+=============================================================
+Merge Sort:
+- Divide array in half recursively until single elements
+- Merge sorted halves: compare front elements, take smaller one
+- Time: O(n log n) always | Space: O(n) auxiliary
+- Stable sort — preserves relative order of equal elements
+- External sort: good for data that doesn't fit in memory
+
+Quick Sort:
+- Choose pivot, partition array (elements < pivot left, > pivot right)
+- Recursively sort both partitions
+- Average: O(n log n) | Worst case: O(n²) with bad pivot (sorted array)
+- In-place: O(log n) stack space
+- Fastest in practice due to cache locality
+- Randomized pivot avoids worst case with high probability
+
+Binary Search:
+- Only works on sorted arrays
+- Compare target with middle element, eliminate half each iteration
+- Time: O(log n) | Space: O(1) iterative, O(log n) recursive
+- log₂(10⁶) ≈ 20 iterations to search 1 million elements
+
+=============================================================
+GRAPH ALGORITHMS
+=============================================================
+BFS (Breadth-First Search):
+- Uses a queue, explores all neighbors at current depth first
+- Time: O(V + E) | Space: O(V)
+- Finds shortest path in unweighted graphs
+- Applications: shortest path, level-order traversal, cycle detection
+
+DFS (Depth-First Search):
+- Uses a stack (or recursion), explores as far as possible before backtracking
+- Time: O(V + E) | Space: O(V)
+- Applications: topological sort, cycle detection, connected components, maze solving
+
+Dijkstra's Algorithm:
+- Shortest path in weighted graphs (non-negative weights)
+- Uses min-heap (priority queue)
+- Time: O((V + E) log V) with binary heap
+- Greedy: always process vertex with smallest tentative distance
+
+Topological Sort:
+- Linear ordering of vertices in a DAG (Directed Acyclic Graph)
+- For every edge (u,v), u comes before v in ordering
+- Used for dependency resolution, build systems, course prerequisites
+- Kahn's algorithm (BFS-based) or DFS-based
+
+=============================================================
+TIME & SPACE COMPLEXITY — BIG O NOTATION
+=============================================================
+Big O describes asymptotic upper bound of algorithm complexity.
+
+Common complexities (fastest to slowest):
+O(1)        — constant: array access, hash table lookup
+O(log n)    — logarithmic: binary search, BST operations (balanced)
+O(n)        — linear: linear search, single loop
+O(n log n)  — linearithmic: merge sort, heap sort, efficient sorts
+O(n²)       — quadratic: bubble sort, selection sort, insertion sort, nested loops
+O(2^n)      — exponential: recursive Fibonacci (naive), subset generation
+O(n!)       — factorial: traveling salesman brute force, permutation generation
+
+Space complexity works the same way.
+Amortized analysis: average cost over a sequence of operations (e.g., dynamic array resize).

@@ -1,0 +1,301 @@
+CS Interview Notes — Systems, Networking & Databases
+NUST SEECS | CS-419 Study Material
+
+=============================================================
+OPERATING SYSTEMS — DEADLOCKS & SYNCHRONIZATION
+=============================================================
+Deadlock: a situation where two or more processes are permanently blocked,
+each waiting for a resource held by another process in the cycle.
+
+Four Coffman conditions (ALL must hold for deadlock to occur):
+1. Mutual Exclusion: at least one resource must be non-shareable
+2. Hold and Wait: processes hold resources while waiting for more
+3. No Preemption: resources cannot be forcibly taken from processes
+4. Circular Wait: circular chain of processes each waiting for resource held by next
+
+Prevention: break one of the four conditions.
+- Eliminate Hold and Wait: acquire all resources at once
+- Allow Preemption: if blocked, release all resources
+- Impose ordering: always acquire resources in same fixed order (breaks circular wait)
+
+Detection & Recovery: allow deadlock, detect cycle in resource graph, kill process or preempt resource.
+Banker's Algorithm: deadlock avoidance — check if granting a resource leaves system in safe state.
+
+Race Condition: outcome depends on the order threads execute — unpredictable behavior.
+Critical Section: code segment accessing shared resource, must be executed atomically.
+
+Mutex (Mutual Exclusion lock): binary semaphore, only the locker can unlock.
+Semaphore: integer counter for signaling between threads.
+- Binary semaphore: 0 or 1, similar to mutex
+- Counting semaphore: allows N threads into critical section simultaneously
+- Operations: wait (P, acquire, decrement) and signal (V, release, increment)
+
+Monitor: high-level synchronization construct with condition variables.
+Condition variables: wait(), signal(), broadcast() — used inside monitors.
+
+=============================================================
+VIRTUAL MEMORY & PAGING
+=============================================================
+Virtual Memory: abstraction that gives each process the illusion of its own
+large, contiguous address space. Actual data may be in RAM or disk (swap).
+
+Paging: divides memory into fixed-size pages (physical: frames, logical: pages).
+- Page table maps virtual page number → physical frame number
+- Page fault: page not in RAM → OS loads it from disk (slow, ~ms vs ~ns for RAM)
+- TLB (Translation Lookaside Buffer): hardware cache of recent page translations
+
+Page Replacement Algorithms (when RAM is full):
+- FIFO: replace oldest page
+- LRU (Least Recently Used): replace page not used for longest time — optimal in practice
+- Optimal (Belady's): replace page not needed for longest future time — theoretical
+
+Segmentation: divides memory into variable-size logical segments (code, stack, heap).
+Virtual address = segment number + offset.
+
+Thrashing: OS spends more time paging than executing — happens when working set > RAM.
+
+Process vs Thread:
+- Process: independent execution unit, own address space, heap, file descriptors
+- Thread: lightweight execution unit within a process, shares address space and heap
+- Context switch between processes is expensive (full state save); threads cheaper
+- Python GIL (Global Interpreter Lock): only one thread runs Python bytecode at a time
+
+=============================================================
+NETWORKING — TCP/UDP AND PROTOCOLS
+=============================================================
+TCP (Transmission Control Protocol):
+- Connection-oriented: three-way handshake (SYN → SYN-ACK → ACK) to establish
+- Reliable: acknowledgment (ACK) for every segment; retransmit on timeout or duplicate ACK
+- Ordered: sequence numbers ensure in-order delivery
+- Flow control: receiver advertises window size to prevent sender overflow (sliding window)
+- Congestion control: slow start, congestion avoidance, fast retransmit, fast recovery
+- Four-way handshake to close: FIN → ACK → FIN → ACK
+- Use cases: HTTP/HTTPS, email (SMTP), file transfer (FTP), SSH
+
+UDP (User Datagram Protocol):
+- Connectionless: no handshake, no state
+- Unreliable: no ACKs, no retransmit, no ordering guarantee
+- Low latency: no overhead of TCP
+- Use cases: DNS queries, video streaming, online gaming, VoIP, DHCP
+
+HTTPS (HTTP Secure):
+- HTTP over TLS (Transport Layer Security)
+- TLS handshake: negotiate cipher suite, exchange certificates, establish session keys
+- Asymmetric encryption to exchange symmetric session key
+- All HTTP traffic is encrypted end-to-end using symmetric key (AES)
+- Certificate: signed by CA (Certificate Authority), proves server identity
+- HTTPS default port: 443. HTTP default port: 80.
+
+DNS (Domain Name System):
+- Translates domain names (google.com) to IP addresses (142.250.80.46)
+- Hierarchy: root servers → TLD servers (.com, .org) → authoritative name servers
+- Recursive resolver queries on behalf of client
+- Caching: TTL (Time to Live) reduces repeated lookups
+- DNS over HTTPS (DoH): encrypts DNS queries for privacy
+
+OSI Model (7 layers, bottom to top):
+1. Physical      — bits on wire (Ethernet cable, WiFi signals)
+2. Data Link     — frames, MAC addresses (Ethernet, WiFi)
+3. Network       — packets, IP addresses, routing (IP, ICMP)
+4. Transport     — segments, ports, reliability (TCP, UDP)
+5. Session       — sessions between applications
+6. Presentation  — data format, encryption (TLS/SSL)
+7. Application   — HTTP, HTTPS, FTP, SMTP, DNS
+
+=============================================================
+CAP THEOREM
+=============================================================
+CAP Theorem (Brewer's Theorem): a distributed system can guarantee at most
+2 of the following 3 properties simultaneously:
+
+C — Consistency: every read receives the most recent write or an error
+A — Availability: every request receives a (non-error) response
+P — Partition Tolerance: system continues operating despite network partition
+
+Since network partitions are unavoidable in real distributed systems,
+designers must choose between CP and AP:
+- CP systems (sacrifice availability): HBase, Zookeeper, traditional RDBMS
+- AP systems (sacrifice consistency): Cassandra, CouchDB, DNS
+
+Eventual Consistency: given no new updates, all replicas will eventually converge
+to the same value. Used by AP systems (Cassandra, DynamoDB).
+Strong Consistency: all replicas see same data at same time.
+
+=============================================================
+DATABASES — SQL, INDEXING, NORMALIZATION
+=============================================================
+SQL vs NoSQL:
+- SQL (Relational): structured tables with fixed schema, ACID transactions, joins
+  Examples: PostgreSQL, MySQL, SQLite, SQL Server
+- NoSQL: flexible schema, horizontal scaling, eventual consistency
+  Types: document (MongoDB), key-value (Redis), column (Cassandra), graph (Neo4j)
+  Use when: high write throughput, flexible schema, massive scale, no complex joins
+
+Primary Key: uniquely identifies each row in a table. Cannot be NULL.
+Foreign Key: references the primary key of another table, enforcing referential integrity.
+Composite Key: primary key made of multiple columns.
+
+Indexing: data structure (usually B-tree) that speeds up queries on a column.
+- Without index: full table scan O(n)
+- With B-tree index: O(log n) lookup
+- Tradeoff: indexes speed up reads but slow down writes (must update index on insert/update)
+- Index on columns used in WHERE, JOIN, ORDER BY clauses
+
+ACID Properties:
+- Atomicity: transaction is all-or-nothing (commit or rollback)
+- Consistency: transaction brings DB from one valid state to another
+- Isolation: concurrent transactions don't interfere (serializability)
+- Durability: committed transactions persist even after crash (WAL — write-ahead log)
+
+Normal Forms (Normalization — reducing data redundancy):
+- 1NF: atomic values, no repeating groups
+- 2NF: 1NF + no partial dependencies on composite key
+- 3NF: 2NF + no transitive dependencies (non-key → non-key)
+- BCNF: stricter 3NF — every determinant is a candidate key
+
+JOINs:
+- INNER JOIN: rows matching in both tables
+- LEFT JOIN (LEFT OUTER JOIN): all rows from left, matching from right (NULL if no match)
+- RIGHT JOIN: all rows from right, matching from left
+- FULL OUTER JOIN: all rows from both tables
+
+=============================================================
+OBJECT-ORIENTED PROGRAMMING (OOP)
+=============================================================
+Four pillars of OOP:
+1. Encapsulation: bundling data and methods, hiding internal state (private/public)
+2. Abstraction: exposing only necessary interface, hiding implementation details
+3. Inheritance: child class inherits properties/methods from parent class
+   Promotes code reuse. Python supports multiple inheritance.
+4. Polymorphism: same interface, different behavior
+   - Method Overriding: subclass redefines parent method (runtime polymorphism)
+   - Method Overloading: same name, different parameters (compile-time, Python uses *args)
+
+Abstract Class vs Interface:
+- Abstract class: can have both abstract (unimplemented) and concrete methods; single inheritance
+- Interface: only abstract method signatures; multiple inheritance supported
+- Python: abc.ABC with @abstractmethod; no explicit interface keyword (use duck typing)
+
+SOLID Principles:
+S — Single Responsibility: class has one reason to change
+O — Open/Closed: open for extension, closed for modification
+L — Liskov Substitution: subclass can replace parent without breaking program
+I — Interface Segregation: prefer many small interfaces over one large one
+D — Dependency Inversion: depend on abstractions, not concretions
+
+Design Patterns (GoF):
+Creational:
+- Singleton: ensure only one instance exists (lazy instantiation, thread-safe with lock)
+- Factory: create objects without specifying exact class
+- Abstract Factory: factory of factories
+Structural:
+- Decorator: add behavior to objects dynamically without modifying class
+- Adapter: make incompatible interfaces compatible
+- Proxy: surrogate that controls access to another object
+Behavioral:
+- Observer: publish-subscribe pattern; notify dependents on state change
+- Strategy: define family of algorithms, make them interchangeable
+- Iterator: sequential access to aggregate without exposing representation
+
+=============================================================
+SYSTEM DESIGN CONCEPTS
+=============================================================
+Load Balancing: distributes incoming requests across multiple servers.
+- Round Robin: cycle through servers in order
+- Least Connections: send to server with fewest active connections
+- IP Hashing: same client always goes to same server (session affinity)
+
+Caching: store frequently accessed data in fast memory (Redis, Memcached).
+Eviction Policies:
+- LRU (Least Recently Used): evict item not accessed for longest time
+- LFU (Least Frequently Used): evict least frequently accessed item
+- TTL (Time to Live): expire entries after fixed duration
+
+CDN (Content Delivery Network): geographically distributed servers serving
+static assets (images, CSS, JS) from location closest to user. Reduces latency.
+
+Message Queue (Kafka, RabbitMQ, SQS):
+- Decouples producers and consumers
+- Asynchronous processing — producer doesn't wait for consumer
+- Enables retry, dead letter queues, fan-out
+- Buffer for handling traffic spikes
+
+Rate Limiting: restrict number of requests per time window.
+Algorithms: token bucket (smooth bursts), leaky bucket (strict rate), sliding window.
+Used to prevent abuse, DoS attacks, API quota enforcement.
+
+Horizontal Scaling (Scale Out): add more machines (servers) to distribute load.
+Vertical Scaling (Scale Up): add more resources (CPU, RAM) to existing machine.
+Horizontal is preferred for web services — more resilient, no single point of failure.
+
+Microservices: application broken into small, independently deployable services.
+Each service owns its data, communicates via API (REST or gRPC) or message queue.
+Pros: independent deployment, fault isolation, technology diversity.
+Cons: distributed system complexity, network latency, eventual consistency.
+
+Sharding: partition a database horizontally across multiple servers.
+Each shard holds a subset of data (e.g., by user ID range or hash).
+
+Producer-Consumer Problem: classic synchronization problem.
+- Producer generates data, puts in shared buffer
+- Consumer takes data from buffer and processes it
+- Buffer has fixed size — producer blocks when full, consumer blocks when empty
+- Solution: use semaphores (empty, full, mutex) or blocking queue
+
+=============================================================
+CLOSURES AND PROGRAMMING CONCEPTS
+=============================================================
+Closure (JavaScript, Python): a function that captures variables from its
+enclosing lexical scope, even after that scope has returned.
+
+Python closure example:
+  def outer(x):
+      def inner(y):
+          return x + y  # x is captured from outer's scope
+      return inner
+  add5 = outer(5)
+  add5(3)  # returns 8
+
+JavaScript closure example:
+  function counter() {
+      let count = 0;
+      return function() { return ++count; };
+  }
+  const c = counter();
+  c(); // 1, c(); // 2  — count is captured in closure
+
+Closure captures variable by reference in Python, by value in some languages.
+Common use: factory functions, decorators, maintaining state without classes.
+
+Scope rules (Python LEGB):
+- Local → Enclosing → Global → Built-in
+
+Generators (Python): functions that yield values lazily, one at a time.
+Use 'yield' instead of 'return'. Memory efficient for large sequences.
+
+=============================================================
+SINGLETON DESIGN PATTERN
+=============================================================
+Singleton: ensures a class has only one instance and provides global access to it.
+
+Use cases: database connection pool, logger, config manager, thread pool.
+
+Implementation approaches:
+1. Eager initialization: create instance at class definition time
+2. Lazy initialization: create on first use (with double-checked locking for thread safety)
+3. Python module-level variable: Python modules are singletons by nature
+
+Thread-safe Singleton in Python:
+  import threading
+  class Singleton:
+      _instance = None
+      _lock = threading.Lock()
+      @classmethod
+      def get_instance(cls):
+          if cls._instance is None:
+              with cls._lock:
+                  if cls._instance is None:
+                      cls._instance = cls()
+          return cls._instance
+
+Downsides: global state makes testing hard, violates Single Responsibility.
