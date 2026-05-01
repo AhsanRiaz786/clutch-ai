@@ -38,7 +38,6 @@ from PyQt5.QtWidgets import (
 HINT_DISPLAY_MS = int(os.getenv("HINT_DISPLAY_SECONDS", "12")) * 1000
 
 WINDOW_WIDTH    = 420
-WINDOW_MAX_H    = 340
 EDGE_INSET      = 20
 BORDER_RADIUS   = 16
 
@@ -249,55 +248,13 @@ class HintOverlay(QWidget):
     @staticmethod
     def _format_hint(text: str) -> str:
         """
-        Convert plain-text hint to HTML.
-
-        Technical (4-line):
-          Line 1         → bold white (definition / lead)
-          Lines with →   → cyan arrow + normal white text
-
-        Personal/behavioral (OPEN / DETAIL / CLOSE):
-          Label          → cyan, bold
-          Content        → normal white
+        Convert plain-text hint to HTML for the overlay.
+        Now simply escapes the conversational paragraph.
         """
         import html as _html
         lines = text.strip().splitlines()
-        parts = []
-        behavioral_labels = {"OPEN:", "DETAIL:", "CLOSE:"}
-
-        for i, raw in enumerate(lines):
-            line = raw.strip()
-            if not line:
-                continue
-
-            # ── Personal/behavioral labeled lines ──────────────────────────
-            matched_label = None
-            for lbl in behavioral_labels:
-                if line.upper().startswith(lbl):
-                    matched_label = lbl
-                    break
-
-            if matched_label:
-                label_html = (
-                    f'<span style="color:{ACCENT_HEX};font-weight:bold;">'
-                    f'{_html.escape(matched_label)}</span>'
-                )
-                rest = _html.escape(line[len(matched_label):].strip())
-                parts.append(f"{label_html} {rest}")
-
-            # ── Technical → talking-point lines ────────────────────────────
-            elif line.startswith("→"):
-                arrow = f'<span style="color:{ACCENT_HEX};">→</span>'
-                rest  = _html.escape(line[1:].lstrip())
-                parts.append(f"{arrow} {rest}")
-
-            # ── First line of technical format — bold definition ────────────
-            elif i == 0 or (not any(p.startswith("<b") for p in parts)):
-                parts.append(f"<b>{_html.escape(line)}</b>")
-
-            else:
-                parts.append(_html.escape(line))
-
-        return "<br>".join(parts)
+        parts = [_html.escape(line) for line in lines if line.strip()]
+        return "<br><br>".join(parts)
 
     # ------------------------------------------------------------------
     # Streaming support
@@ -326,7 +283,6 @@ class HintOverlay(QWidget):
         self._hint_label.setTextFormat(Qt.PlainText)
         self._hint_label.setText(partial.strip())
         self.adjustSize()
-        self.setMaximumHeight(WINDOW_MAX_H)
 
     # ------------------------------------------------------------------
     # Final display (after streaming complete or direct call)
@@ -347,7 +303,6 @@ class HintOverlay(QWidget):
         self._footer.setText(f"Auto-hides in {secs}s")
 
         self.adjustSize()
-        self.setMaximumHeight(WINDOW_MAX_H)
         self._reposition()
 
         self.setWindowOpacity(1.0)
