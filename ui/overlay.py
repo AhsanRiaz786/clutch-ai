@@ -74,14 +74,9 @@ class HintOverlay(QWidget):
         """Configure window flags and attributes."""
         self.setWindowFlags(
             Qt.FramelessWindowHint      |   # No title bar or borders
-            Qt.WindowStaysOnTopHint     |   # Always on top
-            Qt.ToolTip                  |   # Bypasses dock, forces on top, follows spaces
-            Qt.WindowTransparentForInput |  # Click-through
-            Qt.WindowDoesNotAcceptFocus     # Never steals focus
+            Qt.WindowStaysOnTopHint         # Always on top
         )
         self.setAttribute(Qt.WA_TranslucentBackground, True)
-        self.setAttribute(Qt.WA_ShowWithoutActivating, True)
-        self.setFocusPolicy(Qt.NoFocus)
         self.setFixedWidth(WINDOW_WIDTH)
 
         # Apply a subtle drop shadow
