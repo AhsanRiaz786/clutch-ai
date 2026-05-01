@@ -112,15 +112,18 @@ def _macos_hide_from_capture(win_id: int) -> None:
 class HintOverlay(QWidget):
     """Thread-safe hint overlay. Emit hint_signal(str) from any thread."""
 
-    hint_signal = pyqtSignal(str)
+    hint_signal   = pyqtSignal(str)   # final complete hint → formatted display
+    stream_signal = pyqtSignal(str)   # partial text during streaming → plain display
 
     def __init__(self) -> None:
         super().__init__()
         self._macos_applied = False
+        self._streaming = False
         self._setup_window()
         self._setup_ui()
         self._setup_timer()
         self.hint_signal.connect(self.show_hint)
+        self.stream_signal.connect(self._on_stream_chunk)
 
     # ------------------------------------------------------------------
     # Window flags
@@ -181,13 +184,13 @@ class HintOverlay(QWidget):
         header.addStretch()
         root.addLayout(header)
 
-        # Hint text
+        # Hint text — RichText so we can bold the definition line
         self._hint_label = QLabel("")
         self._hint_label.setWordWrap(True)
-        self._hint_label.setTextFormat(Qt.PlainText)
+        self._hint_label.setTextFormat(Qt.RichText)
         self._hint_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self._hint_label.setStyleSheet(
-            f"color: {TEXT_HEX}; font-size: 13px;"
+            f"color: {TEXT_HEX}; font-size: 13px; line-height: 170%;"
         )
         f = QFont("Helvetica Neue")
         f.setPixelSize(13)
@@ -243,32 +246,125 @@ class HintOverlay(QWidget):
     # Public API
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _format_hint(text: str) -> str:
+        """
+        Convert plain-text hint to HTML.
+
+        Technical (4-line):
+          Line 1         → bold white (definition / lead)
+          Lines with →   → cyan arrow + normal white text
+
+        Personal/behavioral (OPEN / DETAIL / CLOSE):
+          Label          → cyan, bold
+          Content        → normal white
+        """
+        import html as _html
+        lines = text.strip().splitlines()
+        parts = []
+        behavioral_labels = {"OPEN:", "DETAIL:", "CLOSE:"}
+
+        for i, raw in enumerate(lines):
+            line = raw.strip()
+            if not line:
+                continue
+
+            # ── Personal/behavioral labeled lines ──────────────────────────
+            matched_label = None
+            for lbl in behavioral_labels:
+                if line.upper().startswith(lbl):
+                    matched_label = lbl
+                    break
+
+            if matched_label:
+                label_html = (
+                    f'<span style="color:{ACCENT_HEX};font-weight:bold;">'
+                    f'{_html.escape(matched_label)}</span>'
+                )
+                rest = _html.escape(line[len(matched_label):].strip())
+                parts.append(f"{label_html} {rest}")
+
+            # ── Technical → talking-point lines ────────────────────────────
+            elif line.startswith("→"):
+                arrow = f'<span style="color:{ACCENT_HEX};">→</span>'
+                rest  = _html.escape(line[1:].lstrip())
+                parts.append(f"{arrow} {rest}")
+
+            # ── First line of technical format — bold definition ────────────
+            elif i == 0 or (not any(p.startswith("<b") for p in parts)):
+                parts.append(f"<b>{_html.escape(line)}</b>")
+
+            else:
+                parts.append(_html.escape(line))
+
+        return "<br>".join(parts)
+
+    # ------------------------------------------------------------------
+    # Streaming support
+    # ------------------------------------------------------------------
+
+    def _on_stream_chunk(self, partial: str) -> None:
+        """
+        Called on every streaming token from the LLM.
+        Shows the window immediately on first chunk; updates plain text
+        as tokens arrive. The final show_hint() call switches to
+        formatted HTML and starts the auto-hide timer.
+        """
+        self._streaming = True
+
+        if not self.isVisible():
+            self._reposition()
+            self.setWindowOpacity(1.0)
+            self.show()
+            self.raise_()
+            if not self._macos_applied:
+                _macos_hide_from_capture(int(self.winId()))
+                self._macos_applied = True
+            self._footer.setText("Generating ...")
+
+        # Plain text during streaming — fastest possible render
+        self._hint_label.setTextFormat(Qt.PlainText)
+        self._hint_label.setText(partial.strip())
+        self.adjustSize()
+        self.setMaximumHeight(WINDOW_MAX_H)
+
+    # ------------------------------------------------------------------
+    # Final display (after streaming complete or direct call)
+    # ------------------------------------------------------------------
+
     def show_hint(self, text: str) -> None:
-        """Display hint. Safe to call from any thread via signal."""
-        self._hint_label.setText(text.strip())
+        """
+        Display the final formatted hint. Safe to call from any thread
+        via hint_signal. Applies rich HTML formatting and starts the
+        auto-hide timer.
+        """
+        self._streaming = False
         secs = HINT_DISPLAY_MS // 1000
+
+        # Switch to rich-text for formatting
+        self._hint_label.setTextFormat(Qt.RichText)
+        self._hint_label.setText(self._format_hint(text))
         self._footer.setText(f"Auto-hides in {secs}s")
 
         self.adjustSize()
         self.setMaximumHeight(WINDOW_MAX_H)
         self._reposition()
 
-        # Always show at full opacity — no animation risk
         self.setWindowOpacity(1.0)
         self.show()
         self.raise_()
 
-        # macOS: apply once, after the native window exists
         if not self._macos_applied:
             _macos_hide_from_capture(int(self.winId()))
             self._macos_applied = True
 
         self._timer.stop()
         self._timer.start(HINT_DISPLAY_MS)
-        print(f"[UI] Hint displayed ({secs}s auto-hide)")
+        print(f"[UI] Hint displayed ({secs}s)")
 
     def _on_timer(self) -> None:
         self.hide()
+        self._streaming = False
         print("[UI] Hint hidden")
 
 
