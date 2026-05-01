@@ -2,121 +2,184 @@
 ui/overlay.py
 Clutch.ai — PyQt5 Transparent Hint Overlay
 
-A frameless, transparent, always-on-top PyQt5 window that displays 3-bullet
-hint text. Auto-hides after 12 seconds. Never steals keyboard focus.
-Thread-safe via Qt signal/slot mechanism.
+Key properties:
+  - Frameless, transparent, always-on-top
+  - NEVER steals keyboard focus
+  - On macOS: NSWindowSharingNone → invisible to Zoom/Meet screen capture
+    while remaining visible to the local user
+  - Auto-hides after HINT_DISPLAY_SECONDS
 
 Usage (from pipeline.py):
     app = QApplication(sys.argv)
     overlay = HintOverlay()
-    overlay.hint_signal.connect(overlay.show_hint)
-    # From worker thread:
-    overlay.hint_signal.emit("- Hint 1\n- Hint 2\n- Hint 3")
+    # From any thread:
+    overlay.hint_signal.emit("- Hint 1\\n- Hint 2\\n- Hint 3")
 """
 
 import os
 import sys
+import ctypes
+import ctypes.util
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 load_dotenv()
 
-from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QRect
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QColor, QFont, QPainter, QPainterPath
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGraphicsDropShadowEffect
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout
+)
 
 # ---------------------------------------------------------------------------
-# Constants (from .env or defaults)
+# Configuration
 # ---------------------------------------------------------------------------
-HINT_DISPLAY_SECONDS = int(os.getenv("HINT_DISPLAY_SECONDS", "12")) * 1000  # ms
+HINT_DISPLAY_MS = int(os.getenv("HINT_DISPLAY_SECONDS", "12")) * 1000
 
-WINDOW_WIDTH  = 400
-WINDOW_MAX_H  = 300
-INSET_PX      = 24
-BORDER_RADIUS = 16
+WINDOW_WIDTH    = 420
+WINDOW_MAX_H    = 340
+EDGE_INSET      = 20
+BORDER_RADIUS   = 16
 
-# Premium Glassmorphism Theme
-BG_COLOR      = (10, 15, 25, int(0.75 * 255))   # highly translucent deep dark blue
-BORDER_COLOR  = (255, 255, 255, int(0.15 * 255))
-ACCENT_COLOR  = "#00E5FF"                       # Cyan neon accent
-TEXT_COLOR    = "#F3F4F6"
-FONT_SIZE     = 14
-FONT_FAMILY   = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+# Colours
+BG_COLOR        = QColor(10, 15, 28, 230)     # deep navy, ~90% opaque
+BORDER_COLOR    = QColor(255, 255, 255, 45)
+ACCENT_COLOR    = QColor(0, 229, 255)          # cyan
+ACCENT_HEX      = "#00E5FF"
+TEXT_HEX        = "#F1F5F9"
+DIM_HEX         = "#64748B"
 
-LOGO_TEXT     = "● CLUTCH.AI LIVE"
 
+# ---------------------------------------------------------------------------
+# macOS: exclude window from screen-share capture
+# ---------------------------------------------------------------------------
+
+def _macos_hide_from_capture(win_id: int) -> None:
+    """
+    [NSWindow setSharingType: NSWindowSharingNone]
+    Makes the window invisible to Zoom/Meet/QuickTime screen capture
+    while staying fully visible on the local display.
+    Also raises the window level above meeting software.
+    """
+    if sys.platform != "darwin":
+        return
+    try:
+        libobjc = ctypes.cdll.LoadLibrary(ctypes.util.find_library("objc"))
+        libobjc.sel_registerName.restype = ctypes.c_void_p
+        libobjc.objc_msgSend.restype     = ctypes.c_void_p
+        libobjc.objc_msgSend.argtypes    = [ctypes.c_void_p, ctypes.c_void_p]
+
+        view   = ctypes.c_void_p(win_id)
+        ns_win = libobjc.objc_msgSend(
+            view, libobjc.sel_registerName(b"window")
+        )
+        if not ns_win:
+            print("[UI] macOS: NSWindow not found — skipping")
+            return
+
+        _ulong = ctypes.cast(
+            libobjc.objc_msgSend,
+            ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulonglong),
+        )
+        _long = ctypes.cast(
+            libobjc.objc_msgSend,
+            ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_longlong),
+        )
+
+        # NSWindowSharingNone = 0 → excluded from Zoom/Meet screen capture
+        _ulong(ns_win, libobjc.sel_registerName(b"setSharingType:"), 0)
+
+        # NSStatusWindowLevel = 25 → floats above meeting software chrome
+        _long(ns_win, libobjc.sel_registerName(b"setLevel:"), 25)
+
+        # NSWindowCollectionBehaviorCanJoinAllSpaces = 1<<3
+        # → appears on every Mission Control Space/desktop
+        _ulong(ns_win, libobjc.sel_registerName(b"setCollectionBehavior:"), 1 << 3)
+
+        # Force to front in the current Space immediately
+        libobjc.objc_msgSend(ns_win, libobjc.sel_registerName(b"orderFrontRegardless"))
+
+        print("[UI] macOS: NSWindowSharingNone + AllSpaces + orderFront applied ✓")
+    except Exception as exc:
+        print(f"[UI] macOS screen-share invisibility failed: {exc}")
+
+
+# ---------------------------------------------------------------------------
+# Overlay widget
+# ---------------------------------------------------------------------------
 
 class HintOverlay(QWidget):
-    """
-    Frameless, transparent, always-on-top overlay for displaying interview hints.
-
-    Signals:
-        hint_signal(str): Emit from any thread to display a hint safely.
-    """
+    """Thread-safe hint overlay. Emit hint_signal(str) from any thread."""
 
     hint_signal = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
+        self._macos_applied = False
         self._setup_window()
         self._setup_ui()
         self._setup_timer()
-
-        # Connect signal to slot (thread-safe)
         self.hint_signal.connect(self.show_hint)
 
     # ------------------------------------------------------------------
-    # Window setup
+    # Window flags
     # ------------------------------------------------------------------
 
     def _setup_window(self) -> None:
-        """Configure window flags and attributes."""
         self.setWindowFlags(
-            Qt.FramelessWindowHint      |   # No title bar or borders
-            Qt.WindowStaysOnTopHint         # Always on top
+            Qt.FramelessWindowHint       |
+            Qt.WindowStaysOnTopHint      |
+            Qt.Tool                      |
+            Qt.WindowDoesNotAcceptFocus
         )
         self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.setAttribute(Qt.WA_ShowWithoutActivating, True)
         self.setFixedWidth(WINDOW_WIDTH)
-
-        # Apply a subtle drop shadow
-        shadow = QGraphicsDropShadowEffect(self)
-        shadow.setBlurRadius(25)
-        shadow.setXOffset(0)
-        shadow.setYOffset(10)
-        shadow.setColor(QColor(0, 0, 0, 120))
-        self.setGraphicsEffect(shadow)
-
         self._reposition()
 
     def _reposition(self) -> None:
-        """Move to top-right of the active screen."""
-        desktop = QApplication.desktop()
-        screen_number = desktop.screenNumber(QApplication.desktop().cursor().pos())
-        screen = desktop.availableGeometry(screen_number)
-        
-        # Position Top-Right
-        x = screen.right()  - WINDOW_WIDTH - INSET_PX + 1
-        y = screen.top()    + INSET_PX
+        screens = QApplication.screens()
+
+        # OVERLAY_SCREEN env var: integer index to pin to a specific screen.
+        # Leave unset (or "auto") to follow the cursor.
+        screen_idx = os.getenv("OVERLAY_SCREEN", "auto").strip()
+        if screen_idx.isdigit() and int(screen_idx) < len(screens):
+            screen_obj = screens[int(screen_idx)]
+        else:
+            from PyQt5.QtGui import QCursor
+            screen_obj = QApplication.screenAt(QCursor.pos()) or QApplication.primaryScreen()
+
+        screen = screen_obj.availableGeometry()
+        x = screen.right() - WINDOW_WIDTH - EDGE_INSET
+        y = screen.top() + EDGE_INSET
         self.move(x, y)
 
     # ------------------------------------------------------------------
-    # UI setup
+    # UI layout
     # ------------------------------------------------------------------
 
     def _setup_ui(self) -> None:
-        """Build the internal layout: logo label + hint label."""
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(14, 16, 14, 14)
-        layout.setSpacing(6)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(18, 14, 18, 14)
+        root.setSpacing(8)
 
-        # Logo / header
-        self._logo_label = QLabel(LOGO_TEXT)
-        self._logo_label.setStyleSheet(
-            f"color: {ACCENT_COLOR}; font-size: 11px; font-weight: bold; "
-            "letter-spacing: 1px;"
+        # Header
+        header = QHBoxLayout()
+        header.setSpacing(6)
+
+        dot = QLabel("●")
+        dot.setStyleSheet(f"color: {ACCENT_HEX}; font-size: 9px;")
+        header.addWidget(dot)
+
+        brand = QLabel("CLUTCH.AI  ·  LIVE")
+        brand.setStyleSheet(
+            f"color: {ACCENT_HEX}; font-size: 10px; font-weight: 700; "
+            "letter-spacing: 2px;"
         )
-        layout.addWidget(self._logo_label)
+        header.addWidget(brand)
+        header.addStretch()
+        root.addLayout(header)
 
         # Hint text
         self._hint_label = QLabel("")
@@ -124,87 +187,93 @@ class HintOverlay(QWidget):
         self._hint_label.setTextFormat(Qt.PlainText)
         self._hint_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self._hint_label.setStyleSheet(
-            f"color: {TEXT_COLOR}; font-size: {FONT_SIZE}px; "
-            "line-height: 1.5; padding: 4px;"
+            f"color: {TEXT_HEX}; font-size: 13px;"
         )
-        font = QFont()
-        font.setPixelSize(FONT_SIZE)
-        self._hint_label.setFont(font)
-        layout.addWidget(self._hint_label)
+        f = QFont("Helvetica Neue")
+        f.setPixelSize(13)
+        self._hint_label.setFont(f)
+        root.addWidget(self._hint_label)
 
-        self.setLayout(layout)
+        # Footer
+        self._footer = QLabel(f"Auto-hides in {HINT_DISPLAY_MS // 1000}s")
+        self._footer.setStyleSheet(f"color: {DIM_HEX}; font-size: 10px;")
+        root.addWidget(self._footer)
+
+        self.setLayout(root)
+
+    # ------------------------------------------------------------------
+    # Auto-hide timer
+    # ------------------------------------------------------------------
 
     def _setup_timer(self) -> None:
-        """Set up the auto-hide timer."""
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
-        self._timer.timeout.connect(self._on_timer)
+        self._timer.timeout.connect(self.hide)
 
     # ------------------------------------------------------------------
-    # Custom painting — rounded background with top accent line
+    # Custom painting
     # ------------------------------------------------------------------
 
-    def paintEvent(self, event) -> None:
+    def paintEvent(self, _event) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        r, g, b, a = BG_COLOR
-        painter.setBrush(QColor(r, g, b, a))
-        painter.setPen(Qt.NoPen)
+        w, h = self.width(), self.height()
 
-        # Rounded rect background
+        # Background
         path = QPainterPath()
-        path.addRoundedRect(0, 0, self.width(), self.height(), BORDER_RADIUS, BORDER_RADIUS)
-        painter.drawPath(path)
-
-        # Inner border
-        pen = painter.pen()
-        br, bg, bb, ba = BORDER_COLOR
-        painter.setPen(QColor(br, bg, bb, ba))
-        painter.drawPath(path)
-
-        # Top accent line (3px, cyan glow)
+        path.addRoundedRect(0, 0, w, h, BORDER_RADIUS, BORDER_RADIUS)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QColor(ACCENT_COLOR))
-        painter.drawRoundedRect(0, 0, self.width(), 3, 2, 2)
+        painter.setBrush(BG_COLOR)
+        painter.drawPath(path)
+
+        # Border rim
+        painter.setPen(BORDER_COLOR)
+        painter.setBrush(Qt.NoBrush)
+        painter.drawPath(path)
+
+        # Cyan top accent bar (3 px)
+        accent = QPainterPath()
+        accent.addRoundedRect(0, 0, w, 3, 2, 2)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(ACCENT_COLOR)
+        painter.drawPath(accent)
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
     def show_hint(self, text: str) -> None:
-        """
-        Display a hint. Called from the main thread via signal/slot.
+        """Display hint. Safe to call from any thread via signal."""
+        self._hint_label.setText(text.strip())
+        secs = HINT_DISPLAY_MS // 1000
+        self._footer.setText(f"Auto-hides in {secs}s")
 
-        Args:
-            text: Multi-line string of dash-prefixed bullet points.
-        """
-        # Clean up the text — ensure each bullet is on its own line
-        formatted = text.strip()
-        self._hint_label.setText(formatted)
-
-        # Resize to fit content
         self.adjustSize()
         self.setMaximumHeight(WINDOW_MAX_H)
         self._reposition()
 
+        # Always show at full opacity — no animation risk
+        self.setWindowOpacity(1.0)
         self.show()
         self.raise_()
 
-        # Restart 12-second auto-hide timer
-        self._timer.stop()
-        self._timer.start(HINT_DISPLAY_SECONDS)
+        # macOS: apply once, after the native window exists
+        if not self._macos_applied:
+            _macos_hide_from_capture(int(self.winId()))
+            self._macos_applied = True
 
-        print(f"[UI] Hint displayed ({HINT_DISPLAY_SECONDS // 1000}s)")
+        self._timer.stop()
+        self._timer.start(HINT_DISPLAY_MS)
+        print(f"[UI] Hint displayed ({secs}s auto-hide)")
 
     def _on_timer(self) -> None:
-        """Called when the display timer fires — hides the overlay."""
         self.hide()
-        print("[UI] Hint hidden (timer expired)")
+        print("[UI] Hint hidden")
 
 
 # ---------------------------------------------------------------------------
-# Standalone test
+# Standalone test  —  python ui/overlay.py
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
@@ -212,20 +281,22 @@ if __name__ == "__main__":
     import time
 
     app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
 
     overlay = HintOverlay()
-    overlay.show_hint("Clutch.ai ready...")
 
-    def _send_test_hint():
-        time.sleep(2)
-        hint = (
-            "- BST: left < node < right, O(log n) average\n"
-            "- In-order traversal gives sorted output\n"
-            "- Degenerate case: sorted input → O(n) — use AVL or Red-Black"
+    # Show immediately so we can see it
+    overlay.show_hint("⚡ Clutch.ai ready — speak a technical question ...")
+
+    def _send_test():
+        time.sleep(3)
+        overlay.hint_signal.emit(
+            "- BST: left < node < right, avg O(log n)\n"
+            "- In-order traversal yields sorted sequence\n"
+            "- Degenerate (sorted input) → O(n); prefer AVL or Red-Black"
         )
-        overlay.hint_signal.emit(hint)
 
-    t = threading.Thread(target=_send_test_hint, daemon=True)
-    t.start()
+    threading.Thread(target=_send_test, daemon=True).start()
 
+    QTimer.singleShot(20_000, app.quit)
     sys.exit(app.exec_())
