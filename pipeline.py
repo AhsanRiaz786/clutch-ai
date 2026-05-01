@@ -79,7 +79,7 @@ def on_transcript(text: str) -> None:
         else:
             try:
                 chunks = retrieve(text, k=3)
-                print(f"[RETRIEVE] {len(chunks)} chunk(s) retrieved.")
+                print(f"[RETRIEVE] {len(chunks)} chunk(s).")
             except RuntimeError as e:
                 print(f"[RETRIEVE] Warning: {e}. Proceeding without context.")
                 chunks = []
@@ -182,8 +182,33 @@ def main():
     # Register Ctrl+C handler
     signal.signal(signal.SIGINT, _handle_sigint)
 
+    # ── Parallel model pre-warming ──────────────────────────────────────────
+    # Audio thread loads Whisper (~3-5s). Meanwhile we load the classifier,
+    # MiniLM embedder, and ChromaDB in a second thread so everything is hot
+    # by the time the first question is transcribed.
+
+    def _prewarm():
+        import time
+        t0 = time.perf_counter()
+        print("[PREWARM] Loading classifier + embedder ...")
+        try:
+            predict("binary search tree")          # warms classifier + its MiniLM copy
+        except Exception as e:
+            print(f"[PREWARM] Classifier warm-up failed: {e}")
+
+        print("[PREWARM] Loading RAG embedder + ChromaDB ...")
+        try:
+            retrieve("binary search tree", k=1)    # warms RAG embedder + ChromaDB
+        except Exception as e:
+            print(f"[PREWARM] RAG warm-up failed (collection may not exist yet): {e}")
+
+        elapsed = (time.perf_counter() - t0) * 1000
+        print(f"[PREWARM] All models hot in {elapsed:.0f}ms ✓")
+
+    prewarm_thread = threading.Thread(target=_prewarm, daemon=True, name="PrewarmThread")
+
     # Start audio capture in a daemon thread
-    print("\n[PIPELINE] Starting audio capture thread ...")
+    print("\n[PIPELINE] Starting audio capture + model pre-warming ...")
     audio_thread = threading.Thread(
         target=start_capture,
         args=(on_transcript, stop_event),
@@ -191,7 +216,8 @@ def main():
         name="AudioCaptureThread",
     )
     audio_thread.start()
-    print("[PIPELINE] Audio thread started ✓")
+    prewarm_thread.start()
+    print("[PIPELINE] Audio + prewarm threads started ✓")
     print("[PIPELINE] Listening for technical questions ... (Ctrl+C to stop)\n")
 
     # Enter Qt event loop (blocks until quit)
