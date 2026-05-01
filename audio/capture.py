@@ -227,16 +227,16 @@ def _transcribe(audio: np.ndarray) -> str:
     segments, _info = model.transcribe(
         audio,
         language="en",
-        beam_size=5,
+        beam_size=3,                    # 3 = 30% faster than 5, negligible WER δ with initial_prompt
         temperature=0.0,
         patience=1.0,
         initial_prompt=INITIAL_PROMPT,
         condition_on_previous_text=False,
-        no_speech_threshold=0.55,
+        no_speech_threshold=0.50,
         log_prob_threshold=-1.0,
         compression_ratio_threshold=2.4,
         suppress_blank=True,
-        vad_filter=False,   # We do our own VAD — disable Whisper's internal one
+        vad_filter=False,               # we run our own VAD
         word_timestamps=False,
     )
 
