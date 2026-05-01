@@ -450,6 +450,33 @@ NOISE = [
     "I have not done that before but I am willing to learn.",
 ]
 
+# ── Dynamic Loading from data.csv ──────────────────────────────────────────
+csv_path = Path(__file__).parent.parent / "data.csv"
+if csv_path.exists():
+    import csv
+    try:
+        with open(csv_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            added_tech = 0
+            added_behav = 0
+            
+            # Simple heuristic keywords to classify behavioral vs technical
+            behav_keywords = ["strength", "weakness", "tell me about", "describe a time", 
+                              "why do you want", "how do you handle", "experience", "describe a"]
+            
+            for row in reader:
+                q = row.get("output", "").strip()
+                if q:
+                    lower_q = q.lower()
+                    if any(k in lower_q for k in behav_keywords):
+                        PERSONAL_BEHAVIORAL.append(q)
+                        added_behav += 1
+                    else:
+                        TECHNICAL_QUESTIONS.append(q)
+                        added_tech += 1
+        print(f"[DATASET] Loaded {added_tech} technical and {added_behav} behavioral questions from data.csv")
+    except Exception as e:
+        print(f"[DATASET] Failed to load data.csv: {e}")
 
 # ---------------------------------------------------------------------------
 # Dataset builder
