@@ -33,10 +33,9 @@ DEFAULT_K       = int(os.getenv("TOP_K_CHUNKS", "3"))
 # ---------------------------------------------------------------------------
 # Singletons
 # ---------------------------------------------------------------------------
-_embedder = None
-_client   = None   # ChromaDB client (cached — safe to reuse)
-# Note: we do NOT cache the collection object because ingest.py can
-# delete and recreate it. Always re-fetch by name from the client.
+_embedder   = None
+_client     = None
+_collection = None   # cached after first verified fetch
 
 
 def _get_embedder() -> SentenceTransformer:
@@ -56,7 +55,10 @@ def _get_client() -> chromadb.PersistentClient:
 
 
 def _get_collection():
-    """Always fetches the collection fresh by name — survives ingest reruns."""
+    """Returns cached collection; loads on first call."""
+    global _collection
+    if _collection is not None:
+        return _collection
     client = _get_client()
     existing = [c.name for c in client.list_collections()]
     if COLLECTION_NAME not in existing:
@@ -64,11 +66,9 @@ def _get_collection():
             f"ChromaDB collection '{COLLECTION_NAME}' not found at '{CHROMA_PATH}'. "
             "Run 'python ingest/ingest.py' first to ingest your notes."
         )
-    collection = client.get_collection(COLLECTION_NAME)
-    count = collection.count()
-    print(f"[RETRIEVE] Connected to ChromaDB collection '{COLLECTION_NAME}' "
-          f"({count} chunks) ✓")
-    return collection
+    _collection = client.get_collection(COLLECTION_NAME)
+    print(f"[RETRIEVE] Collection '{COLLECTION_NAME}' ({_collection.count()} chunks) loaded ✓")
+    return _collection
 
 
 # ---------------------------------------------------------------------------
@@ -103,7 +103,6 @@ def retrieve(query: str, k: int = DEFAULT_K) -> List[str]:
 
     # Extract the document texts
     chunks = results["documents"][0] if results["documents"] else []
-    print(f"[RETRIEVE] Retrieved {len(chunks)} chunk(s) for query: '{query[:60]}...'")
     return chunks
 
 
