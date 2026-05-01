@@ -43,29 +43,30 @@ stop_event: threading.Event = threading.Event()
 # Transcript callback — runs in audio worker thread
 # ---------------------------------------------------------------------------
 
-MIN_CLASSIFIER_CONFIDENCE = 88.0   # confidence floor for all question types
+MIN_CLASSIFIER_CONFIDENCE = 85.0   # confidence floor
 
 def on_transcript(text: str) -> None:
     """
     Pipeline:
-        1. Classify → technical | personal_behavioral | noise
+        1. Classify → technical_question | personal_behavioral | noise
         2. noise → skip
-        3. technical    → retrieve CS notes   → bullet hint
-        4. personal_behavioral → retrieve resume → paragraph hint
-        5. Emit to overlay
+        3. confidence < floor → skip
+        4. technical_question → CS notes retrieval → structured 4-line hint (streamed)
+        5. personal_behavioral → resume retrieval → OPEN/DETAIL/CLOSE scaffold (streamed)
+        6. Stream tokens to overlay in real time; emit final formatted hint when done
     """
     try:
         label, confidence = predict(text)
-        print(f"[CLASSIFY] Label: {label} ({confidence:.1f}%) | '{text[:80]}'")
+        print(f"[CLASSIFY] {label} ({confidence:.1f}%) | '{text[:80]}'")
 
-        # Skip noise entirely
+        # Noise = background speech, filler, candidate's own answers
         if label == "noise":
-            print(f"[CLASSIFY] Skipping (noise).")
+            print("[CLASSIFY] Skipping — noise.")
             return
 
         # Confidence gate
         if confidence < MIN_CLASSIFIER_CONFIDENCE:
-            print(f"[CLASSIFY] Skipping (confidence {confidence:.1f}% < {MIN_CLASSIFIER_CONFIDENCE}%).")
+            print(f"[CLASSIFY] Skipping — confidence {confidence:.1f}% < {MIN_CLASSIFIER_CONFIDENCE}%.")
             return
 
         # Route retrieval by question type
@@ -78,20 +79,23 @@ def on_transcript(text: str) -> None:
         else:
             try:
                 chunks = retrieve(text, k=3)
-                print(f"[RETRIEVE] Got {len(chunks)} chunk(s).")
+                print(f"[RETRIEVE] {len(chunks)} chunk(s) retrieved.")
             except RuntimeError as e:
                 print(f"[RETRIEVE] Warning: {e}. Proceeding without context.")
                 chunks = []
 
-        # Generate hint with question_type so prompt format is correct
-        hint = generate_hint(text, chunks, question_type=label)
-        print(f"[HINT] Generated:\n{hint}")
+        # Stream tokens to overlay as they arrive, then emit final formatted hint
+        def _stream_chunk(partial: str):
+            overlay.stream_signal.emit(partial)
 
+        hint = generate_hint(text, chunks, question_type=label, on_chunk=_stream_chunk)
+        print(f"[HINT]\n{hint}")
+
+        # Final emit: switches overlay from plain streaming text to formatted HTML
         overlay.hint_signal.emit(hint)
-        print("[UI] Hint signal emitted.")
 
     except Exception as e:
-        print(f"[PIPELINE] Error in on_transcript: {e}")
+        print(f"[PIPELINE] Error: {e}")
 
 
 
