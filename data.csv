@@ -1,0 +1,525 @@
+instruction,input,output
+machine learning interview question,,Is it possible to use KNN for image processing?
+machine learning interview question,,Differentiate between K-Means and KNN algorithms?
+machine learning interview question,,"Explain the terms Artificial Intelligence (AI), Machine Learning (ML) and Deep Learning?"
+machine learning interview question,,What are the different types of Learning/ Training models in ML?
+machine learning interview question,,What is the difference between deep learning and machine learning?
+machine learning interview question,,What is the main key difference between supervised and unsupervised machine learning?
+machine learning interview question,,How do you select important variables while working on a data set?
+machine learning interview question,,"There are many machine learning algorithms till now. If given a data set, how can one determine which algorithm to be used for that?"
+machine learning interview question,,How are covariance and correlation different from one another?
+machine learning interview question,,State the differences between causality and correlation?
+machine learning interview question,,We look at machine learning software almost all the time. How do we apply Machine Learning to Hardware?
+machine learning interview question,,Explain One-hot encoding and Label Encoding. How do they affect the dimensionality of the given dataset?
+machine learning interview question,,When does regularization come into play in Machine Learning?
+machine learning interview question,,"What is Bias, Variance and what do you mean by Bias-Variance Tradeoff?"
+machine learning interview question,,How can we relate standard deviation and variance?
+machine learning interview question,,A data set is given to you and it has missing values which spread along 1 standard deviation from the mean. How much of the data would remain untouched?
+machine learning interview question,,Is a high variance in data good or bad?
+machine learning interview question,,"If your dataset is suffering from high variance, how would you handle it?"
+machine learning interview question,,"A data set is given to you about utilities fraud detection. You have built aclassifier model and achieved a performance score of 98.5%. Is this a goodmodel? If yes, justify. If not, what can you do about it?"
+machine learning interview question,,Explain the handling of missing or corrupted values in the given dataset.
+machine learning interview question,,What is Time series?
+machine learning interview question,,What is a Box-Cox transformation?
+machine learning interview question,,What is the difference between stochastic gradient descent (SGD) and gradient descent (GD)?
+machine learning interview question,,What is the exploding gradient problem while using the back propagation technique?
+machine learning interview question,,Can you mention some advantages and disadvantages of decision trees?
+machine learning interview question,,Explain the differences between Random Forest and Gradient Boosting machines.
+machine learning interview question,,What is a confusion matrix and why do you need it?
+machine learning interview question,,What’s a Fourier transform?
+machine learning interview question,,What do you mean by Associative Rule Mining (ARM)?
+machine learning interview question,,What is Marginalisation? Explain the process.
+machine learning interview question,,Explain the phrase “Curse of Dimensionality”.
+machine learning interview question,,What is the Principle Component Analysis?
+machine learning interview question,,Why is rotation of components so important in Principle Component Analysis (PCA)?
+machine learning interview question,,What are outliers? Mention three methods to deal with outliers.
+machine learning interview question,,What is the difference between regularization and normalisation?
+machine learning interview question,,Explain the difference between Normalization and Standardization.
+machine learning interview question,,List the most popular distribution curves along with scenarios where you will use them in an algorithm.
+machine learning interview question,,How do we check the normality of a data set or a feature?
+machine learning interview question,,What is Linear Regression?
+machine learning interview question,,Differentiate between regression and classification.
+machine learning interview question,,What is target imbalance? How do we fix it? A scenario where you have performed target imbalance on data. Which metrics and algorithms do you find suitable to input this data onto?
+machine learning interview question,,List all assumptions for data to be met before starting with linear regression.
+machine learning interview question,,When does the linear regression line stop rotating or finds an optimal spot where it is fitted on data?
+machine learning interview question,,Why is logistic regression a type of classification technique and not a regression? Name the function it is derived from?
+machine learning interview question,,What could be the issue when the beta value for a certain variable varies way too much in each subset when regression is run on different subsets of the given dataset?
+machine learning interview question,,What does the term Variance Inflation Factor mean?
+machine learning interview question,,"Which machine learning algorithm is known as the lazy learner, and why is it called so?"
+machine learning interview question,,How does the SVM algorithm deal with self-learning?
+machine learning interview question,,What are Kernels in SVM? List popular kernels used in SVM along with a scenario of their applications.
+machine learning interview question,,What is Kernel Trick in an SVM Algorithm?
+machine learning interview question,,What are ensemble models? Explain how ensemble techniques yield better learning as compared to traditional classification ML algorithms.
+machine learning interview question,,What are overfitting and underfitting? Why does the decision tree algorithm suffer often with overfitting problems?
+machine learning interview question,,What is OOB error and how does it occur?
+machine learning interview question,,Why boosting is a more stable algorithm as compared to other ensemble algorithms?
+machine learning interview question,,How do you handle outliers in the data?
+machine learning interview question,,List popular cross validation techniques.
+machine learning interview question,,"Is it possible to test for the probability of improving model accuracy without cross-validation techniques? If yes, please explain"
+machine learning interview question,,Name a popular dimensionality reduction algorithm.
+machine learning interview question,,How can we use a dataset without the target variable into supervised learning algorithms?
+machine learning interview question,,List all types of popular recommendation systems? Name and explain two personalized recommendation systems along with their ease of implementation
+machine learning interview question,,How do we deal with sparsity issues in recommendation systems? How do we measure its effectiveness? Explain.
+machine learning interview question,,Name and define techniques used to find similarities in the recommendation system.
+machine learning interview question,,State the limitations of Fixed Basis Function.
+machine learning interview question,,Define and explain the concept of Inductive Bias with some examples.
+machine learning interview question,,Explain the term instance-based learning.
+machine learning interview question,,"Keeping train and test split criteria in mind, is it good to perform scaling before the split or after the split?"
+machine learning interview question,,"Define precision, recall and F1 Score?"
+machine learning interview question,,Plot validation score and training score with data set size on the x-axis and another plot with model complexity on the x-axis.
+machine learning interview question,,What is Bayes’ Theorem? State at least 1 use case with respect to the machine learning context?
+machine learning interview question,,What is Naive Bayes? Why is it Naive?
+machine learning interview question,,Explain how a Naive Bayes Classifier works
+machine learning interview question,,What do the terms prior probability and marginal likelihood in context of Naive Bayes theorem mean?
+machine learning interview question,,Explain the difference between Lasso and Ridge?
+machine learning interview question,,What’s the difference between probability and likelihood?
+machine learning interview question,,Why would you Prune your tree?
+machine learning interview question,,Model accuracy or Model performance? Which one will you prefer and why?
+machine learning interview question,,List the advantages and limitations of the Temporal Difference Learning Method.
+machine learning interview question,,How would you handle an imbalanced dataset?
+machine learning interview question,,Mention some of the EDA Techniques?
+machine learning interview question,,Mention why feature engineering is important in model building and list out some of the techniques used for feature engineering.
+machine learning interview question,,Differentiate between Statistical Modeling and Machine Learning?
+machine learning interview question,,Differentiate between Boosting and Bagging?
+machine learning interview question,,What is the significance of Gamma and Regularization in SVM?
+machine learning interview question,,Define ROC curve work
+machine learning interview question,,What is the difference between a generative and discriminative model?
+machine learning interview question,,What are hyperparameters and how are they different from parameters?
+machine learning interview question,,What is shattering a set of points? Explain VC dimension.
+machine learning interview question,,What are some differences between a linked list and an array?
+machine learning interview question,,What is the meshgrid () method and the contourf () method? State some usesof both.
+machine learning interview question,,Describe a hash table.
+machine learning interview question,,List the advantages and disadvantages of using Neural Networks.
+machine learning interview question,,You have to train a 12GB dataset using a neural network with a machine which has only 3GB RAM. How would you go about it?
+machine learning interview question,,What is an Array?
+machine learning interview question,,What are the advantages and disadvantages of using an Array?
+machine learning interview question,,What is Lists in Python?
+machine learning interview question,,Explain Eigenvectors and Eigenvalues.
+machine learning interview question,,How would you define the number of clusters in a clustering algorithm?
+machine learning interview question,,What are the performance metrics that can be used to estimate the efficiency of a linear regression model?
+machine learning interview question,,What is the default method of splitting in decision trees?
+machine learning interview question,,How is p-value useful?
+machine learning interview question,,Can logistic regression be used for classes more than 2?
+machine learning interview question,,What are the hyperparameters of a logistic regression model?
+machine learning interview question,,Name a few hyper-parameters of decision trees?
+machine learning interview question,,How to deal with multicollinearity?
+machine learning interview question,,What is Heteroscedasticity?
+machine learning interview question,,Is ARIMA model a good fit for every time series problem?
+machine learning interview question,,How do you deal with the class imbalance in a classification problem?
+machine learning interview question,,What is the role of cross-validation?
+machine learning interview question,,What is a voting model?
+machine learning interview question,,How to deal with very few data samples? Is it possible to make a model out of it?
+machine learning interview question,,What are the hyperparameters of an SVM?
+machine learning interview question,,What is Pandas Profiling?
+machine learning interview question,,What impact does correlation have on PCA?
+machine learning interview question,,How is PCA different from LDA?
+machine learning interview question,,What distance metrics can be used in KNN?
+machine learning interview question,,Which metrics can be used to measure correlation of categorical data?
+machine learning interview question,,Which algorithm can be used in value imputation in both categorical and continuous categories of data?
+machine learning interview question,,When should ridge regression be preferred over lasso?
+machine learning interview question,,Which algorithms can be used for important variable selection?
+machine learning interview question,,What ensemble technique is used by Random forests?
+machine learning interview question,,What ensemble technique is used by gradient boosting trees?
+machine learning interview question,,If we have a high bias error what does it mean? How to treat it?
+machine learning interview question,,Which type of sampling is better for a classification model and why?
+machine learning interview question,,What is a good metric for measuring the level of multicollinearity?
+machine learning interview question,,When can be a categorical value treated as a continuous variable and what effect does it have when done so?
+machine learning interview question,,What is the role of maximum likelihood in logistic regression.
+machine learning interview question,,Which distance do we measure in the case of KNN?
+machine learning interview question,,What is a pipeline?
+machine learning interview question,,Which sampling technique is most suitable when working with time-series data?
+machine learning interview question,,What are the benefits of pruning?
+machine learning interview question,,What is normal distribution?
+machine learning interview question,,What is the 68 per cent rule in normal distribution?
+machine learning interview question,,What is a chi-square test?
+machine learning interview question,,What is a random variable?
+machine learning interview question,,What is the degree of freedom?
+machine learning interview question,,Which kind of recommendation system is used by amazon to recommend similar items?
+machine learning interview question,,What is a false positive?
+machine learning interview question,,What is a false negative?
+machine learning interview question,,What is the error term composed of in regression?
+machine learning interview question,,Which performance metric is better R2 or adjusted R2?
+machine learning interview question,,What’s the difference between Type I and Type II error?
+machine learning interview question,,What do you understand by L1 and L2 regularization?
+machine learning interview question,,"Which one is better, Naive Bayes Algorithm or Decision Trees?"
+machine learning interview question,,What do you mean by the ROC curve?
+machine learning interview question,,What do you mean by AUC curve?
+machine learning interview question,,What is log likelihood in logistic regression?
+machine learning interview question,,How would you evaluate a logistic regression model?
+machine learning interview question,,What are the advantages of SVM algorithms?
+machine learning interview question,,Why does XGBoost perform better than SVM?
+machine learning interview question,,What is the difference between SVM Rank and SVR (Support Vector Regression)?
+machine learning interview question,,What is the difference between the normal soft margin SVM and SVM with a linear kernel?
+machine learning interview question,,How is linear classifier relevant to SVM?
+machine learning interview question,,What are the advantages of using a naive Bayes for classification?
+machine learning interview question,,Are Gaussian Naive Bayes the same as binomial Naive Bayes?
+machine learning interview question,,What is the difference between the Naive Bayes Classifier and the Bayes classifier?
+machine learning interview question,,In what real world applications is Naive Bayes classifier used?
+machine learning interview question,,In what real world applications is Naive Bayes classifier used?
+machine learning interview question,,What do you understand by selection bias in Machine Learning?
+machine learning interview question,,What do you understand by Precision and Recall?
+machine learning interview question,,What Are the Three Stages of Building a Model in Machine Learning?
+machine learning interview question,,How Do You Design an Email Spam Filter in Machine Learning?
+machine learning interview question,,What is the difference between Entropy and Information Gain?
+machine learning interview question,,What are collinearity and multicollinearity?
+machine learning interview question,,What is Kernel SVM?
+machine learning interview question,,What is the process of carrying out a linear regression?
+Web development interview question,,What skills should a good Web Developer have?
+Web development interview question,,Are you aware of the roles and responsibilities of a Web Developer?
+Web development interview question,,What are the added benefits of HTTP/2 compared to HTTP 1.1?
+Web development interview question,,Can you list a few ways to speed up Page Loading?
+Web development interview question,,How is XHTML different from HTML?
+Web development interview question,,Explain Webpack.
+Web development interview question,,"List out newly introduced input types, APIs, form elements, and elements that support media content in HTML5."
+Web development interview question,,State the difference between span tag and div tag in HTML5.
+Web development interview question,,Explain HTML5 Web storage.
+Web development interview question,,Explain DOM
+Web development interview question,,What do you know about pair programming
+Web development interview question,,"While building a web application, how do you consider SEO, maintainability, UX, performance, and security?"
+Web development interview question,,State the difference between SVG (Scalable Vector Graphics) and Canvas.
+Web development interview question,,What is Type Coercion in JavaScript?
+Web development interview question,,State the difference between <window.onload> and <onDocumentReady>?
+Web development interview question,,Describe the different kinds of HTTP requests supported by RESTful Web services.
+Web development interview question,,How does CORS work?
+Web development interview question,,What is an Entity Tag?
+Web development interview question,,Can you define what Long Polling is?
+Web development interview question,,What is DTD and what is the difference between PCDATA and CDATA in DTD?
+Web development interview question,,What are the APIs that the HTML5 standard provides?
+Web development interview question,,What is the best way to integrate different style sheets into a website?
+Web development interview question,,How do you optimize the loading time of your web application as a Web Developer?
+Web development interview question,,Define NPM
+Web development interview question,,What are the different popup boxes that are available in JavaScript?
+Web development interview question,,Explain the term “Scope” in JavaScript and write its different types.
+Web development interview question,,Can you explain what AJAX is?
+Web development interview question,,What do you mean by CDN (Content Delivery Network) in jQuery?
+Web development interview question,,Explain W3C (World Wide Consortium).
+Web development interview question,,What do you mean by CSS Selectors? Name a Few.
+Web development interview question,,"In CSS, there are numerous different sorts of selectors. Give some examples."
+Web development interview question,,How do pseudo-classes work?
+Web development interview question,,Why are media queries used in CSS?
+Web development interview question,,State difference between Local Storage and Cookies.
+Web development interview question,,What is the purpose of Canvas in HTML?
+Web development interview question,,What is the purpose of closures in JavaScript?
+Web development interview question,,What is an event loop in Node JS?
+Web development interview question,,What is a Blocking Code?
+Web development interview question,,What is the CSS Grid System?
+Web development interview question,,What are Angular Route Guards?
+Web development interview question,,Can you compare MongoDB and SQL Databases?
+Web development interview question,,Are all the Object-Oriented Programming Principles supported in Typescript?
+Web development interview question,,What is the difference between client-side and server-side programming?
+Web development interview question,,What is the use of HTTP cookies?
+Web development interview question,,Explain the concept of responsive web design
+Web development interview question,,What is a content delivery network (CDN)?
+Web development interview question,,What are some common performance optimization techniques for web applications?
+Web development interview question,,What is cross-origin resource sharing (CORS)?
+Web development interview question,,"What is the purpose of HTML, CSS, and JavaScript in web development?"
+Web development interview question,,What does the box model in CSS represent?
+Web development interview question,,What is event propagation in JavaScript?
+Web development interview question,,What is the document object model (DOM)?
+Web development interview question,,How can you achieve progressive rendering in web applications?
+Web development interview question,,What are the benefits of using CSS pre- and post-processors?
+Web development interview question,,How do you handle issues with browser compatibility?
+Web development interview question,,What are the different ways to implement secure authentication in web applications?
+Web development interview question,,Explain web components and their benefits
+Web development interview question,,What is the difference between React and Angular?
+Web development interview question,,"What is XSS, and how can you prevent it?"
+Web development interview question,,Explain the concept of server-side rendering (SSR) vs. client-side rendering (CSR)
+Web development interview question,,"What is asset bundling, and why is it important?"
+Web development interview question,,Explain the concept of server push in HTTP/2
+Web development interview question,,What is the role of state managers?
+Web development interview question,,What are the benefits of using CSS Grid and Flexbox layouts?
+Web development interview question,,What is the role of TypeScript?
+Web development interview question,,"What is a single-page application (SPA), and how does it differ from a traditional multi-page application (MPA)?"
+Web development interview question,,Explain JavaScript Promises and their advantages over callbacks
+Web development interview question,,How do you measure the performance of a web application?
+Web development interview question,,"What are Service Workers, and how do they benefit web applications?"
+Web development interview question,,Explain the differences between a RESTful API and a GraphQL API
+software development interview question,,"Given an array n integers, are there elements a, b, c in array such that sum of (a,b,c) equals to a particular target X?
+ This Problem can easily be solved in naive O(n³) time complexity. But how do you Solve it in O(n²). With follow up questions like How will you Solve if you want unique Triplets?"
+software development interview question,,Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
+software development interview question,,"Given a paragraph and a list of banned words, return the most frequent word that is not in the list of banned words. This Problem will aid you in learning and implementing Hash Maps and Sets together."
+software development interview question,,What is caching? explain in detail.
+software development interview question,,Given a matrix if an element in the matrix is 0 then you will have to set its entire column and row to 0 and then return the matrix.
+software development interview question,,"Given row number r and column number c. Print the element at position (r, c) in Pascal’s triangle."
+software development interview question,,Given the row number n. Print the n-th row of Pascal’s triangle.
+software development interview question,,"Given an array Arr[] of integers, rearrange the numbers of the given array into the lexicographically next greater permutation of numbers. If such an arrangement is not possible, it must rearrange to the lowest possible order (i.e., sorted in ascending order)."
+software development interview question,,"Given an integer array arr, find the contiguous subarray (containing at least one number) which has the largest sum and returns its sum and prints the subarray."
+software development interview question,,"Given an array consisting of only 0s, 1s, and 2s. Write a program to in-place sort the array without using inbuilt sort functions. ( Expected: Single pass-O(N) and constant space)"
+software development interview question,,"You are given an array of prices where prices[i] is the price of a given stock on an ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0."
+software development interview question,,"Given a matrix, your task is to rotate the matrix 90 degrees clockwise."
+software development interview question,,"Given an array of intervals, merge all the overlapping intervals and return an array of non-overlapping intervals."
+software development interview question,,Given two sorted arrays arr1[] and arr2[] of sizes n and m in non-decreasing order. Merge them in sorted order. Modify arr1 so that it contains the first N elements and modify arr2 so that it contains the last M elements.
+software development interview question,,"Given an array of N + 1 size, where each element is between 1 and N. Assuming there is only one duplicate number, your task is to find the duplicate number."
+software development interview question,,"You are given a read-only array of N integers with values also in the range [1, N] both inclusive. Each integer appears exactly once except A which appears twice and B which is missing. The task is to find the repeating and missing numbers A and B where A repeats twice and B is missing."
+software development interview question,,"You are given a read-only array of N integers with values also in the range [1, N] both inclusive. Each integer appears exactly once except A which appears twice and B which is missing. The task is to find the repeating and missing numbers A and B where A repeats twice and B is missing."
+software development interview question,,"Given an array of N integers, count the inversion of the array What is an inversion of an array? Definition: for all i & j < size of array, if i < j then you have to find pair (A[i],A[j]) such that A[j] < A[i]."
+software development interview question,,"You have been given a 2-D array 'mat' of size 'N x M' where 'N' and 'M' denote the number of rows and columns, respectively. The elements of each row are sorted in non-decreasing order. Moreover, the first element of a row is greater than the last element of the previous row (if it exists). You are given an integer ‘target’, and your task is to find if it exists in the given 'mat' or not."
+software development interview question,,"Given a double x and integer n, calculate x raised to power n. Basically Implement pow(x, n)."
+software development interview question,,"Given an array of N integers, write a program to return an element that occurs more than N/2 times in the given array. You may consider that such an element always exists in the array."
+software development interview question,,"Given an array of N integers. Find the elements that appear more than N/3 times in the array. If no such element exists, return an empty vector."
+software development interview question,,"Given a matrix m X n, count paths from left-top to the right bottom of a matrix with the constraints that from each cell you can either only move to the rightward direction or the downward direction."
+software development interview question,,"Given an array of numbers, you need to return the count of reverse pairs. Reverse Pairs are those pairs where i<j and arr[i]>2*arr[j]."
+software development interview question,,"You have been given a 2-D array 'mat' of size 'N x M' where 'N' and 'M' denote the number of rows and columns, respectively. The elements of each row are sorted in non-decreasing order. Moreover, the first element of a row is greater than the last element of the previous row (if it exists). You are given an integer ‘target’, and your task is to find if it exists in the given 'mat' or not."
+software development interview question,,"Given a double x and integer n, calculate x raised to power n. Basically Implement pow(x, n)."
+software development interview question,,"Given an array of N integers, your task is to find unique quads that add up to give a target value. In short, you need to return an array of all the unique quadruplets [arr[a], arr[b], arr[c], arr[d]] such that their sum is equal to a given target."
+software development interview question,,"Given an array containing both positive and negative integers, we have to find the length of the longest subarray with the sum of all elements equal to zero."
+software development interview question,,Given an array of integers A and an integer B. Find the total number of subarrays having bitwise XOR of all elements equal to k.
+software development interview question,,"Given the head of a singly linked list, write a program to reverse the linked list, and return the head pointer to the reversed list."
+software development interview question,,"Given the head of a singly linked list, return the middle node of the linked list. If there are two middle nodes, return the second middle node."
+software development interview question,,"Given a linked list and an integer N, the task is to delete the Nth node from the end of the linked list and print the updated linked list."
+software development interview question,,"Write a function to delete a node in a singly-linked list. You will not be given access to the head of the list instead, you will be given access to the node to be deleted directly. It is guaranteed that the node to be deleted is not a tail node in the list."
+software development interview question,,"Given the heads of two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list."
+software development interview question,,"Write a function to delete a node in a singly-linked list. You will not be given access to the head of the list instead, you will be given access to the node to be deleted directly. It is guaranteed that the node to be deleted is not a tail node in the list."
+software development interview question,,"Given the head of a singly linked list of `n` nodes and an integer `k`, where k is less than or equal to `n`. Your task is to reverse the order of each group of `k` consecutive nodes, if `n` is not divisible by `k`, then the last group of remaining nodes should remain unchanged."
+software development interview question,,Given a Linked list that has two pointers in each node and one of which points to the first node and the other points to any random node. Write a program to clone the LinkedList.
+software development interview question,,"Given an array print all the sum of the subset generated from it, in the increasing order."
+software development interview question,,Given an array of integers that may contain duplicates the task is to return all possible subsets. Return only unique subsets and they can be in any order.
+software development interview question,,"Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates where the candidate numbers sum to target. Each number in candidates may only be used once in the combination."
+software development interview question,,"Given an array arr of distinct integers, print all permutations of String/Array."
+software development interview question,,"The n-queens is the problem of placing n queens on n × n chessboard such that no two queens can attack each other. Given an integer n, return all distinct solutions to the n -queens puzzle. Each solution contains a distinct boards configuration of the queen's placement, where ‘Q’ and ‘.’ indicate queen and empty space respectively."
+software development interview question,,"Given an undirected graph and a number m, determine if the graph can be colored with at most m colors such that no two adjacent vertices of the graph are colored with the same color."
+software development interview question,,"Given two numbers N and M, find the Nth root of M. The nth root of a number M is defined as a number X when raised to the power N equals M. If the 'nth root is not an integer, return -1."
+software development interview question,,"Given a row-wise sorted matrix of size r*c, where r is no. of rows and c is no. of columns, find the median in the given matrix."
+software development interview question,,Given an array of N integers. Every number in the array except one appears twice. Find the single number in the array.
+software development interview question,,"Given two sorted arrays of size m and n respectively, you are tasked with finding the element that would be at the kth position of the final sorted array."
+software development interview question,,You are given an array 'arr' of size 'n' which denotes the position of stalls. You are also given an integer 'k' which denotes the number of aggressive cows. You are given the task of assigning stalls to 'k' cows such that the minimum distance between any two of them is the maximum possible. Find the maximum possible minimum distance.
+software development interview question,,"Given an unsorted array, print Kth Largest and Smallest Element from an unsorted array."
+software development interview question,,Implement a stack using an array.
+software development interview question,,"Implement Queue Data Structure using Array with all functions like pop, push, top, size, etc."
+software development interview question,,"Implement Queue Data Structure using Array with all functions like pop, push, top, size, etc."
+software development interview question,,"Check Balanced Parentheses. Given string str containing just the characters '(', ')', '{', '}', '[' and ']', check if the input string is valid and return true if the string is balanced otherwise return false."
+software development interview question,,"Given a circular integer array A, return the next greater element for every element in A. The next greater element for an element x is the first element greater than x that we come across while traversing the array in a clockwise manner. If it doesn't exist, return -1 for this element."
+software development interview question,,A Queue is a linear data structure that works on the basis of FIFO(First in First out). This means the element added at first will be removed first from the Queue.
+software development interview question,,"Given a circular integer array A, return the next greater element for every element in A. The next greater element for an element x is the first element greater than x that we come across while traversing the array in a clockwise manner. If it doesn't exist, return -1 for this element."
+software development interview question,,Given an array of integers heights representing the histogram's bar height where the width of each bar is 1 return the area of the largest rectangle in histogram.
+software development interview question,,"Given an array of integers arr, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position. Return the max sliding window."
+software development interview question,,"Implement Min Stack | O(2N) and O(N) Space Complexity. Design a stack that supports push, pop, top, and retrieving the minimum element in constant time."
+software development interview question,,"Given a string s, reverse the words of the string."
+software development interview question,,"Given the root of a Binary Tree, write a recursive function that returns an array containing the inorder traversal of the tree."
+software development interview question,,"Given the root of a Binary Tree, write a recursive function that returns an array containing the postorder traversal of the tree."
+software development interview question,,Write a program for Morris Inorder Traversal of a Binary Tree.
+software development interview question,,"Given a Binary Tree, find the Morris preorder traversal of Binary Tree"
+software development interview question,,"Given a Binary Tree, find the Right/Left view of it. The right view of a Binary Tree is a set of nodes visible when the tree is viewed from the right side. The left view of a Binary Tree is a set of nodes visible when the tree is viewed from the left side."
+software development interview question,,"Given a Binary Tree, find the Right/Left view of it. The right view of a Binary Tree is a set of nodes visible when the tree is viewed from the right side. The left view of a Binary Tree is a set of nodes visible when the tree is viewed from the left side."
+software development interview question,,"Given a Binary Tree, return its Bottom View. The Bottom View of a Binary Tree is the set of nodes visible when we see the tree from the bottom."
+software development interview question,,"Given a Binary Tree, return its Top View. The Top View of a Binary Tree is the set of nodes visible when we see the tree from the top."
+software development interview question,,"Given the root of a Binary Tree, return the preorder, inorder and postorder traversal sequence of the given tree by making just one traversal."
+software development interview question,,"Given a Binary Tree, return the Vertical Order Traversal of it starting from the Leftmost level to the Rightmost level. If there are multiple nodes passing through a vertical line, then they should be printed as they appear in level order traversal of the tree."
+software development interview question,,"Given a Binary Tree, return its maximum width. The maximum width of a Binary Tree is the maximum diameter among all its levels. The width or diameter of a level is the number of nodes between the leftmost and rightmost nodes."
+software development interview question,,"Given the root of a Binary Tree, returns an array containing the level order traversal of the tree."
+software development interview question,,"Given the root of a Binary Tree, return the height of the tree. The height of the tree is equal to the number of nodes on the longest path from root to a leaf."
+software development interview question,,"Given a Binary Tree, print the zigzag traversal of the Binary Tree. Zigzag traversal of a binary tree is a way of visiting the nodes of the tree in a zigzag pattern, alternating between left-to-right and right-to-left at each level."
+software development interview question,,"Given two Binary Trees, return if true if the two trees are identical, otherwise return false."
+software development interview question,,"Given a Binary Tree, print the zigzag traversal of the Binary Tree. Zigzag traversal of a binary tree is a way of visiting the nodes of the tree in a zigzag pattern, alternating between left-to-right and right-to-left at each level."
+software development interview question,,"Given a Binary Tree, perform the boundary traversal of the tree. The boundary traversal is the process of visiting the boundary nodes of the binary tree in the anticlockwise direction, starting from the root."
+software development interview question,,"Given a Binary Tree, determine the maximum sum achievable along any path within the tree. A path in a binary tree is defined as a sequence of nodes where each pair of adjacent nodes is connected by an edge. Nodes can only appear once in the sequence, and the path is not required to start from the root. Identify and compute the maximum sum possible along any path within the given binary tree."
+software development interview question,,"Given the Preorder and Inorder traversal of a Binary Tree, construct the Unique Binary Tree represented by them."
+software development interview question,,"Given a Binary Tree, determine whether the given tree is symmetric or not. A Binary Tree would be Symmetric, when its mirror image is exactly the same as the original tree. If we were to draw a vertical line through the centre of the tree, the nodes on the left and right side would be mirror images of each other."
+software development interview question,,"Given a Binary Tree, convert the value of its nodes to follow the Children Sum Property. The Children Sum Property in a binary tree states that for every node, the sum of its children's values (if they exist) should be equal to the node's value. If a child is missing, it is considered as having a value of 0."
+software development interview question,,Given a Binary Search Tree and an integer ‘K’. Find and return the ‘K-th’ smallest and ‘K-th’ largest element in the given Binary Search Tree.
+software development interview question,,"Given a Binary Tree, design an algorithm to serialise and deserialise it. There is no restriction on how the serialisation and deserialization takes place. But it needs to be ensured that the serialised binary tree can be deserialized to the original tree structure. Serialisation is the process of translating a data structure or object state into a format that can be stored or transmitted (for example, across a computer network) and reconstructed later. The opposite operation, that is, extracting a data structure from stored information, is deserialization."
+software development interview question,,"Given an undirected graph, return a vector of all nodes by traversing the graph using depth-first search (DFS)."
+software development interview question,,"Given an undirected graph, return a vector of all nodes by traversing the graph using breadth-first search (BFS)."
+software development interview question,,"Given an undirected graph with V vertices and E edges, check whether it contains any cycle or not."
+software development interview question,,"Given a Directed Graph with V vertices and E edges, check whether it contains any cycle or not."
+software development interview question,,Given a boolean 2D matrix grid of size N x M. You have to find the number of distinct islands where a group of connected 1s (horizontally or vertically) forms an island. Two islands are considered to be distinct if and only if one island is equal to another (not rotated or reflected).
+software development interview question,,Given an adjacency list of a graph adj of V no. of vertices having 0 based index. Check whether the graph is bipartite or not.
+software development interview question,,"Given a Directed Graph with V vertices (Numbered from 0 to V-1) and E edges, Find the number of strongly connected components in the graph."
+software development interview question,,"Given a weighted, directed and connected graph of V vertices and E edges, Find the shortest distance of all the vertices from the source vertex S."
+software development interview question,,"The problem is to find the shortest distances between every pair of vertices in a given edge-weighted directed graph. The graph is represented as an adjacency matrix of size n*n. Matrix[i][j] denotes the weight of the edge from i to j. If Matrix[i][j]=-1, it means there is no edge from i to j."
+software development interview question,,"Given a weighted, undirected, and connected graph of V vertices and E edges. The task is to find the sum of weights of the edges of the Minimum Spanning Tree."
+software development interview question,,"Given a weighted, undirected, and connected graph of V vertices and E edges. The task is to find the sum of weights of the edges of the Minimum Spanning Tree."
+software development interview question,,"Given an array that contains both negative and positive integers, find the maximum product subarray."
+software development interview question,,Given a string of alphabetic characters. Return the count of distinct substrings of the string(including the empty string) using the Trie data structure.
+software development interview question,,"Given a string, find all the possible subsequences of the string."
+Application development interview question,,What is your development methodology when designing applications and features?
+Application development interview question,,What programming language do you consider to be the most effective for developing applications?
+Application development interview question,,"Which programming languages are you most comfortable with, and why?"
+Application development interview question,,What techniques do you use to develop learning aids for application development?
+Application development interview question,,What strategies do you implement to prevent an application from crashing?
+Application development interview question,,Describe a programming challenge you encountered and what you did to solve it.
+Application development interview question,,How do you balance client demands with application software development?
+Application development interview question,,How would you explain object-oriented programming to someone without a technical background?
+Application development interview question,,"Do you have experience with the agile methodology? If so, describe some pros and cons of implementing it in software development."
+Application development interview question,,What kind of tests do you perform before the launch of a product or service?
+Application development interview question,,How do you differentiate quality control from quality assurance during software testing?
+Application development interview question,,Tell me how applications interact with system software and other IT infrastructures.
+Application development interview question,,What techniques do you use to migrate an application from one platform to another with a different operating system?
+Application development interview question,,How do you stay up to date on technology and industry development?
+Application development interview question,,What are some of the challenges of working with onshore and offshore teams?
+Application development interview question,,How do web applications differ from mobile applications?
+Application development interview question,,How can you store data in Android and iOS? Which databases and native solutions are available?
+Application development interview question,,What are internationalization and localization? Do these terms mean the same thing?
+Application development interview question,,What is the best way for a server to notify an app that some new data is available?
+Application development interview question,,How can you debug your app when it’s already released?
+Application development interview question,,How can sensitive data like contacts or access to the camera (or other sensors) be secured in the world of mobile apps?
+Application development interview question,,What is the difference between native apps and hybrid apps? What are the advantages and disadvantages of hybrid apps?
+Application development interview question,,What are the main things you have to be cautious about when writing for mobile?
+Application development interview question,,Describe the process of publishing apps on Google Play and in Apple’s App Store. What do you need to publish an app to each store?
+Application development interview question,,How can you deal with the plethora of different screen resolutions and screen sizes out there? What unit has been introduced to simplify positioning and sizing elements? How do you deal with images?
+Application development interview question,,What is app sandboxing and what is it for?
+Application development interview question,,What features would you change/implement to an application to make it faster?
+Application development interview question,,Do you have an idea of an app or feature that our customers would enjoy?
+Application development interview question,,How would you ensure the application you’re designing will scale to fit multiple screen sizes?
+Application development interview question,,What would you do if you discovered that a feature you designed had made the application run more slowly?
+Application development interview question,,Which programming languages are you mostly familiar with?
+Application development interview question,,What interfaces do you choose to create a user-friendly application?
+Application development interview question,,How do you minimize security risks?
+Application development interview question,,What steps do you take to migrate an application from one platform to another?
+Application development interview question,,What are the main differences between web and mobile applications?
+Application development interview question,,How do you troubleshoot a crashing application?
+Application development interview question,,What are the commonly used languages in Android?
+Application development interview question,,What are the main components of the Android application framework?
+Application development interview question,,What are the benefits and disadvantages of Kotlin?
+Application development interview question,,How are permissions managed in Android?
+Application development interview question,,What are the launch modes available for the activity in Android?
+Application development interview question,,What is the difference between fragment and activity?
+Application development interview question,,What are the examples of design patterns used in Android applications?
+Application development interview question,,What types of Android app architectural patterns are there?
+Application development interview question,,What additional libraries do you use in Android app development?
+Application development interview question,,What is PendingIntent in Android?
+Application development interview question,,What is a content provider in Android?
+Application development interview question,,What is meant by ANR?
+Application development interview question,,What kind of services are available on Android?
+Application development interview question,,Explain flavors in Android
+Application development interview question,,How do you handle a long-running process in an Android app?
+Application development interview question,,How do you protect an Android app from reverse engineering?
+Application development interview question,,What is Android Jetpack and what are its libraries?
+Application development interview question,,What are the new updates and features in Android 13?
+Application development interview question,,How do you publish an Android app to the Play Store?
+Application development interview question,,What is needed to run code as coroutine?
+Application development interview question,,How do you test an Android application?
+Application development interview question,,What’s the purpose of RxJava?
+Application development interview question,,What are the benefits of MVVM?
+Application development interview question,,How do you provide dependencies between different parts of the app?
+Application development interview question,,What is the Android Architecture?
+Application development interview question,,What is the Android Architecture?
+Application development interview question,,What is the Android Architecture?
+Application development interview question,,What is the importance of having an emulator within the Android environment?
+Application development interview question,,What is the use of an activityCreator?
+Application development interview question,,Describe Activities.
+Application development interview question,,What are Intents?
+Application development interview question,,Differentiate Activities from Services.
+Application development interview question,,What items are important in every Android project?
+Application development interview question,,What is the importance of XML-based layouts?
+Application development interview question,,What are containers?
+Application development interview question,,What is Orientation?
+Application development interview question,,What is the importance of Android in the mobile market?
+Application development interview question,,What do you think are some disadvantages of Android?
+Application development interview question,,What is adb?
+Application development interview question,,What are the four essential states of an activity?
+Application development interview question,,What is ANR?
+Application development interview question,,Which elements can occur only once and must be present?
+Application development interview question,,How are escape characters used as attribute?
+Application development interview question,,What is the importance of settings permissions in app development?
+Application development interview question,,What is the function of an intent filter?
+Application development interview question,,Enumerate the three key loops when monitoring an activity
+Application development interview question,,When is the onStop() method invoked?
+Application development interview question,,Is there a case wherein other qualifiers in multiple resources take precedence over locale?
+Application development interview question,,What are the different states wherein a process is based?
+Application development interview question,,How can the ANR be prevented?
+Application development interview question,,What role does Dalvik play in Android development?
+Application development interview question,,What is the AndroidManifest.xml?
+Application development interview question,,What is the proper way of setting up an Android-powered device for app development?
+Application development interview question,,Enumerate the steps in creating a bounded service through AIDL.
+Application development interview question,,What is the importance of Default Resources?
+Application development interview question,,"When dealing with multiple resources, which one takes precedence?"
+Application development interview question,,When does ANR occur?
+Application development interview question,,What is AIDL?
+Application development interview question,,What data types are supported by AIDL?
+Application development interview question,,What is a Fragment?
+Application development interview question,,What is a visible activity?
+Application development interview question,,When is the best time to kill a foreground activity?
+Application development interview question,,Is it possible to use or add a fragment without using a user interface?
+Application development interview question,,How do you remove icons and widgets from the main screen of the Android device?
+Application development interview question,,What are the core components under the Android application architecture?
+Application development interview question,,What composes a typical Android application project?
+Application development interview question,,What is a Sticky Intent?
+Application development interview question,,Do all mobile phones support the latest Android operating system?
+Application development interview question,,What is portable wi-fi hotspot?
+Application development interview question,,What is an action?
+Application development interview question,,What is the difference between a regular bitmap and a nine-patch image?
+Application development interview question,,What language is supported by Android for application development?
+data analysis interview question,,Mention the differences between Data Mining and Data Profiling?
+data analysis interview question,,Define the term 'Data Wrangling in Data Analytics.
+data analysis interview question,,What are the various steps involved in any analytics project?
+data analysis interview question,,What are the common problems that data analysts encounter during analysis?
+data analysis interview question,,Which are the technical tools that you have used for analysis and presentation purposes?
+data analysis interview question,,What are the best methods for data cleaning?
+data analysis interview question,,What is the significance of Exploratory Data Analysis (EDA)?
+data analysis interview question,,"Explain descriptive, predictive, and prescriptive analytics."
+data analysis interview question,,What are the different types of sampling techniques used by data analysts?
+data analysis interview question,,"Describe univariate, bivariate, and multivariate analysis."
+data analysis interview question,,What are your strengths and weaknesses as a data analyst?
+data analysis interview question,,What are the ethical considerations of data analysis?
+data analysis interview question,,What are some common data visualization tools you have used?
+data analysis interview question,,How can you handle missing values in a dataset?
+data analysis interview question,,Explain the term Normal Distribution.
+data analysis interview question,,What is Time Series analysis?
+data analysis interview question,,How is Overfitting different from Underfitting?
+data analysis interview question,,How do you treat outliers in a dataset?
+data analysis interview question,,What are the different types of Hypothesis testing?
+data analysis interview question,,Explain the Type I and Type II errors in Statistics?
+data analysis interview question,,How would you handle missing data in a dataset?
+data analysis interview question,,Explain the concept of outlier detection and how you would identify outliers in a dataset.
+data analysis interview question,,"In Microsoft Excel, a numeric value can be treated as a text value if it precedes with what?"
+data analysis interview question,,"What is the difference between COUNT, COUNTA, COUNTBLANK, and COUNTIF in Excel?"
+data analysis interview question,,How do you make a dropdown list in MS Excel?
+data analysis interview question,,Can you provide a dynamic range in “Data Source” for a Pivot table?
+data analysis interview question,,What is the function to find the day of the week for a particular date value?
+data analysis interview question,,How does the AND() function work in Excel?
+data analysis interview question,,Explain how VLOOKUP works in Excel?
+data analysis interview question,,What function would you use to get the current date and time in Excel?
+SQL interview question,,How do you subset or filter data in SQL?
+SQL interview question,,What is the difference between a WHERE clause and a HAVING clause in SQL?
+SQL interview question,,"How are Union, Intersect, and Except used in SQL?"
+SQL interview question,,What is a Subquery in SQL?
+SQL interview question,,How do you write a stored procedure in SQL?
+data analysis interview question,,How is joining different from blending in Tableau?
+data analysis interview question,,What do you understand by LOD in Tableau?
+data analysis interview question,,Can you discuss the process of feature selection and its importance in data analysis?
+data analysis interview question,,What are the different connection types in Tableau Software?
+data analysis interview question,,What are the different joins that Tableau provides?
+data analysis interview question,,What is a Gantt Chart in Tableau?
+data analysis interview question,,What is the correct syntax for reshape() function in NumPy?
+data analysis interview question,,What are the different ways to create a data frame in Pandas?
+data analysis interview question,,"There are two arrays, ‘a’ and ‘b’. Stack the arrays a and b horizontally using the NumPy library in Python."
+data analysis interview question,,How can you add a column to a Pandas Data Frame?
+data analysis interview question,,How will you print four random integers between 1 and 15 using NumPy?
+data analysis interview question,,Plot a sine graph using NumPy and Matplotlib library in Python.
+data analysis interview question,,What do you believe are the fundamental soft and hard skills needed as a data analytics professional?
+data analysis interview question,,How would your current/previous supervisor or colleagues describe you?
+data analysis interview question,,What do you enjoy most about data analytics? Is there anything you like least?
+data analysis interview question,,Why do you want to work for our organization as a data analytics professional?
+data analysis interview question,,What data analytics tasks or responsibilities do you think are most important to our organization?
+data analysis interview question,,What do you do to keep up with data trends?
+data analysis interview question,,Tell me about your professional background or experience in data analytics.
+data analysis interview question,,What data analytics certifications or training have you received?
+data analysis interview question,,What is the largest set of data you have ever worked with?
+data analysis interview question,,Tell me about a time when you disagreed with a supervisor or teammate and how you managed it.
+data analysis interview question,,Do you have experience making data analytics presentations to stakeholders?
+data analysis interview question,,What experience do you have with databases and data engineering?
+data analysis interview question,,What data analysis tools do you have experience using?
+data analysis interview question,,What scripting languages do you have experience using? Is there one you enjoy using most?
+data analysis interview question,,What are your strengths as a data analytics professional?
+data analysis interview question,,What are your weaknesses as a data analytics professional? What have you done to overcome those weaknesses?
+data analysis interview question,,How have you used statistical models to solve business problems?
+data analysis interview question,,Define clustering and explain what properties a clustering algorithm includes.
+data analysis interview question,,What is imputation? Describe the different types of imputation techniques you have used.
+data analysis interview question,,What is a hash table collision? How do you prevent it from happening?
+data analysis interview question,,What are some of the common challenges you encounter as a data analytics professional?
+data analysis interview question,,How would you handle a situation where you receive a data set that you believe has suspicious or missing data?
+data analysis interview question,,Tell me about a significant data analytics project you worked on and how the insights you gained from it benefited your team or organization.
+data analysis interview question,,Describe the steps you take during the data exploration process.
+data analysis interview question,,Describe the steps you take during the data preparation process.
+data analysis interview question,,What is logistic regression? What methods do you use to assess logistic regression analysis results?
+data analysis interview question,,Tell me about the most recent data analytics project you worked on and the core steps you took to complete it.
+data analysis interview question,,Which steps of a data analytics project do you enjoy working on most and why?
+data analysis interview question,,"What data analytics tools did you use on your most recent project, and why did you choose them?"
+data analysis interview question,,Tell me about a challenging data analytics project you worked on and how you overcame those challenges or learned from them.
+data analysis interview question,,"At this job, you may often collaborate with colleagues or stakeholders who do not have a technical background in data analytics. What experience do you have explaining complicated or technical ideas in similar situations?"
+data analysis interview question,,How do you determine which statistical methods to use when analyzing data?
+data analysis interview question,,Describe a time when you failed to meet a deadline. What did you learn from that experience?
+data analysis interview question,,Describe a time when you had to persuade others to follow your idea or recommendation. How did you gain buy-in?
+data analysis interview question,,What is your decision-making process when creating data visualizations for clients or stakeholders?
+data analysis interview question,,What steps have you taken to improve your analytics knowledge or skills in the past year?
