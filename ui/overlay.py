@@ -22,27 +22,29 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 load_dotenv()
 
-from PyQt5.QtCore import Qt, QTimer, pyqtSignal
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QRect
 from PyQt5.QtGui import QColor, QFont, QPainter, QPainterPath
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGraphicsDropShadowEffect
 
 # ---------------------------------------------------------------------------
 # Constants (from .env or defaults)
 # ---------------------------------------------------------------------------
 HINT_DISPLAY_SECONDS = int(os.getenv("HINT_DISPLAY_SECONDS", "12")) * 1000  # ms
 
-WINDOW_WIDTH  = 380
-WINDOW_MAX_H  = 220
-INSET_PX      = 20
-BORDER_RADIUS = 12
+WINDOW_WIDTH  = 400
+WINDOW_MAX_H  = 300
+INSET_PX      = 24
+BORDER_RADIUS = 16
 
-BG_COLOR      = (15, 20, 30, int(0.88 * 255))   # rgba(15, 20, 30, 0.88)
-ACCENT_COLOR  = "#3B82F6"                         # Blue top accent
-TEXT_COLOR    = "#FFFFFF"
-FONT_SIZE     = 13
-FONT_FAMILY   = "Inter, Segoe UI, SF Pro Display, sans-serif"
+# Premium Glassmorphism Theme
+BG_COLOR      = (10, 15, 25, int(0.75 * 255))   # highly translucent deep dark blue
+BORDER_COLOR  = (255, 255, 255, int(0.15 * 255))
+ACCENT_COLOR  = "#00E5FF"                       # Cyan neon accent
+TEXT_COLOR    = "#F3F4F6"
+FONT_SIZE     = 14
+FONT_FAMILY   = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 
-LOGO_TEXT     = "⚡ clutch.ai"
+LOGO_TEXT     = "● CLUTCH.AI LIVE"
 
 
 class HintOverlay(QWidget):
@@ -81,14 +83,26 @@ class HintOverlay(QWidget):
         self.setFocusPolicy(Qt.NoFocus)
         self.setFixedWidth(WINDOW_WIDTH)
 
-        # Position: bottom-right corner of primary screen
+        # Apply a subtle drop shadow
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(25)
+        shadow.setXOffset(0)
+        shadow.setYOffset(10)
+        shadow.setColor(QColor(0, 0, 0, 120))
+        self.setGraphicsEffect(shadow)
+
         self._reposition()
 
     def _reposition(self) -> None:
-        """Move to bottom-right of the primary screen."""
-        screen = QApplication.primaryScreen().availableGeometry()
-        x = screen.right()  - WINDOW_WIDTH - INSET_PX
-        y = screen.bottom() - WINDOW_MAX_H  - INSET_PX
+        """Move to top-right of the active screen (where the cursor is)."""
+        desktop = QApplication.desktop()
+        # Find which screen the mouse is currently on
+        screen_number = desktop.screenNumber(QApplication.desktop().cursor().pos())
+        screen = desktop.availableGeometry(screen_number)
+        
+        # Position Top-Right (closer to webcam = natural eye contact)
+        x = screen.right()  - WINDOW_WIDTH - INSET_PX + 1
+        y = screen.top()    + INSET_PX
         self.move(x, y)
 
     # ------------------------------------------------------------------
@@ -116,7 +130,7 @@ class HintOverlay(QWidget):
         self._hint_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self._hint_label.setStyleSheet(
             f"color: {TEXT_COLOR}; font-size: {FONT_SIZE}px; "
-            "line-height: 1.6; padding-left: 2px;"
+            "line-height: 1.5; padding: 4px;"
         )
         font = QFont()
         font.setPixelSize(FONT_SIZE)
@@ -148,7 +162,14 @@ class HintOverlay(QWidget):
         path.addRoundedRect(0, 0, self.width(), self.height(), BORDER_RADIUS, BORDER_RADIUS)
         painter.drawPath(path)
 
-        # Top accent line (3px, blue)
+        # Inner border
+        pen = painter.pen()
+        br, bg, bb, ba = BORDER_COLOR
+        painter.setPen(QColor(br, bg, bb, ba))
+        painter.drawPath(path)
+
+        # Top accent line (3px, cyan glow)
+        painter.setPen(Qt.NoPen)
         painter.setBrush(QColor(ACCENT_COLOR))
         painter.drawRoundedRect(0, 0, self.width(), 3, 2, 2)
 

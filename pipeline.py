@@ -151,6 +151,12 @@ def main():
     print("  ⚡ Clutch.ai — Real-Time Interview Assistance")
     print("  CS-419 Deep Learning | NUST SEECS | Spring 2026")
     print("=" * 65)
+    print("  [PRO TIP] To make the overlay 100% invisible to the interviewer,")
+    print("            share a specific Window (e.g. Chrome, VSCode) in Zoom/")
+    print("            Google Meet instead of sharing your 'Entire Screen'.")
+    print("            The overlay will float on top of your screen but will")
+    print("            not be captured by the meeting software.")
+    print("=" * 65)
 
     # Init Qt application
     app = QApplication(sys.argv)
