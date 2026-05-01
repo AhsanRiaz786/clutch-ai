@@ -1,0 +1,13 @@
+.env
+db/
+models/question_clf.pkl
+__pycache__/
+*.pyc
+.DS_Store
+eval/retrieval_results.txt
+eval/training_curves.png
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
