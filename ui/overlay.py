@@ -75,7 +75,8 @@ class HintOverlay(QWidget):
         self.setWindowFlags(
             Qt.FramelessWindowHint      |   # No title bar or borders
             Qt.WindowStaysOnTopHint     |   # Always on top
-            Qt.Tool                     |   # No taskbar entry
+            Qt.ToolTip                  |   # Bypasses dock, forces on top, follows spaces
+            Qt.WindowTransparentForInput |  # Click-through
             Qt.WindowDoesNotAcceptFocus     # Never steals focus
         )
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -94,13 +95,12 @@ class HintOverlay(QWidget):
         self._reposition()
 
     def _reposition(self) -> None:
-        """Move to top-right of the active screen (where the cursor is)."""
+        """Move to top-right of the active screen."""
         desktop = QApplication.desktop()
-        # Find which screen the mouse is currently on
         screen_number = desktop.screenNumber(QApplication.desktop().cursor().pos())
         screen = desktop.availableGeometry(screen_number)
         
-        # Position Top-Right (closer to webcam = natural eye contact)
+        # Position Top-Right
         x = screen.right()  - WINDOW_WIDTH - INSET_PX + 1
         y = screen.top()    + INSET_PX
         self.move(x, y)
