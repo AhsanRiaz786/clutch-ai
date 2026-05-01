@@ -43,7 +43,7 @@ stop_event: threading.Event = threading.Event()
 # Transcript callback — runs in audio worker thread
 # ---------------------------------------------------------------------------
 
-MIN_CLASSIFIER_CONFIDENCE = 85.0   # confidence floor
+MIN_CLASSIFIER_CONFIDENCE = 75.0   # confidence floor
 
 def on_transcript(text: str) -> None:
     """
